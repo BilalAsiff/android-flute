@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class FluteActivity extends Activity {
+
+    RecordAudio audio = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(FluteConstant.APP_TAG, "Create Flute Activity.");
@@ -19,18 +22,20 @@ public class FluteActivity extends Activity {
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         super.onCreate(savedInstanceState);
-        
+
         FluteSurfaceView fluteView = new FluteSurfaceView(this);
         FluteOnTouchListener fluteOnTouchListener = new FluteOnTouchListener();
         fluteView.setOnTouchListener(fluteOnTouchListener);
-        
+        audio = new RecordAudio();
+        audio.execute();
+
         this.setContentView(fluteView);
     }
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
+        FluteGlobalValue.FLUTE_ON_WORKING = false;
     }
 
     @Override
@@ -41,8 +46,8 @@ public class FluteActivity extends Activity {
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
+        FluteGlobalValue.FLUTE_ON_WORKING = true;
     }
 
     @Override
@@ -54,31 +59,35 @@ public class FluteActivity extends Activity {
     private class RecordAudio extends AsyncTask<Void, double[], Void> {
 
         double max = -100;
-
+        private final int sampleSize = 8196;
+        
         @Override
         protected Void doInBackground(Void... params) {
             try {
-
-                int freq = 44100;
-                int chan = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
-                int enc = AudioFormat.ENCODING_PCM_16BIT;
-                int src = MediaRecorder.AudioSource.MIC;
-                int buflen = AudioRecord.getMinBufferSize(freq, chan, enc);
-                AudioRecord ar = new AudioRecord(src, freq, chan, enc, buflen);
-                int test = ar.getState();
-                ar.startRecording();
-                Log.d("flute", "" + test);
-                short[] buffer = new short[8196];
-                double[] toTransform = new double[8196];
-                while (true) {
-                    int bufferReadResult = ar.read(buffer, 0, 8196);
-                    for (int i = 0; i < 8196 && i < bufferReadResult; i++) {
+                int sampleRateInHz = 44100;
+                int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
+                int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+                int audioSource = MediaRecorder.AudioSource.MIC;
+                int bufferSizeInBytes = AudioRecord.getMinBufferSize(
+                        sampleRateInHz, channelConfig, audioFormat);
+                AudioRecord audioRecord = new AudioRecord(audioSource,
+                        sampleRateInHz, channelConfig, audioFormat,
+                        bufferSizeInBytes);
+                int audioRecordStatus = audioRecord.getState();
+                audioRecord.startRecording();
+                Log.d(FluteConstant.APP_TAG, "AudioRecord status: "
+                        + audioRecordStatus);
+                short[] buffer = new short[this.sampleSize];
+                double[] toTransform = new double[this.sampleSize];
+                while (FluteGlobalValue.FLUTE_ON_WORKING == true) {
+                    int bufferReadResult = audioRecord.read(buffer, 0, this.sampleSize);
+                    for (int i = 0; i < this.sampleSize && i < bufferReadResult; i++) {
                         // toTransform[i] = Math.abs((double) buffer[i]) /
                         // 32767; // signed
                         double f = 20 * Math.log10(toTransform[i]);
                         if (buffer[i] > 0) {
                             // Log.i("max", buffer[i] + "");
-                            Log.i("max", 20 * Math.log(0.9d) + "");
+                            // Log.i("max", 20 * Math.log(0.9d) + "");
                         }
                         // Log.i("hello", 20 * Math.log10(0.1 / 32767) + "");
                         if (f > max) {
@@ -90,18 +99,18 @@ public class FluteActivity extends Activity {
                         // bit
                     }
 
-                    // publishProgress(toTransform);
+                    this.publishProgress(toTransform);
                 }
 
             } catch (Throwable t) {
-                Log.e("AudioRecord", "Recording Failed");
+                Log.e(FluteConstant.APP_TAG, "Recording Failed", t);
             }
 
             return null;
         }
 
         protected void onProgressUpdate(double[]... toTransform) {
-            
+            Log.i(FluteConstant.APP_TAG, "blow");
         }
     }
 
