@@ -8,9 +8,8 @@ import android.view.View.OnTouchListener;
 public class FluteOnTouchListener implements OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.i(FluteConstant.APP_TAG, "" + event.getPointerCount());
         FluteGlobalValue.setMotionEvent(event);
-        Log.i(FluteConstant.APP_TAG, "save");
+        Log.i(FluteConstant.APP_TAG, "Save MotionEvent to FluteGlobalValue.");
         return true;
     }
 }

@@ -17,6 +17,12 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
     private final double MAX_ABSOLUTE_PCM_VALUE = 32768;
 
     private AudioRecord audioRecord = null;
+    
+    private FluteSurfaceView fluteSurfaceView;
+    
+    public FluteAudioInput(FluteSurfaceView fluteSurfaceView) {
+        this.fluteSurfaceView = fluteSurfaceView;
+    }
 
     public void release() {
         if (this.audioRecord != null) {
@@ -72,12 +78,8 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
                         }
                         averageDecibel = this.DECIBEL_ADJUST
                                 + (averageDecibel / transform.length);
-                        if (averageDecibel > 90) {
-                            this.publishProgress(averageDecibel);
-                        }
+                        this.publishProgress(averageDecibel);
                     }
-
-                    FluteGlobalValue.getMotionEvent();
                 }
             }
 
@@ -96,9 +98,9 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
 
     @Override
     protected void onProgressUpdate(Double... values) {
-        // TODO Auto-generated method stub
         super.onProgressUpdate(values);
         Log.i(FluteConstant.APP_TAG, "" + values[0]);
+        this.fluteSurfaceView.draw(values[0]);
     }
 
     @Override
