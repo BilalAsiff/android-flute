@@ -3,11 +3,19 @@ package org.black.flute;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.util.Log;
 
-public class FluteAudioInput implements Runnable {
-    double max = -100;
+/**
+ * Class to accept record input and notify canvas to draw or not.
+ * @author black
+ *
+ */
+public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
     private final int sampleSize = 8196;
+    private final double DECIBEL_ADJUST = 96;
+    private final double MAX_ABSOLUTE_PCM_VALUE = 32768;
+
     private AudioRecord audioRecord = null;
 
     public void release() {
@@ -21,7 +29,7 @@ public class FluteAudioInput implements Runnable {
     }
 
     @Override
-    public void run() {
+    protected Void doInBackground(Void... params) {
         int sampleRateInHz = 44100;
         int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
@@ -37,39 +45,60 @@ public class FluteAudioInput implements Runnable {
                     + audioRecordStatus);
             audioRecord.startRecording();
             short[] audioData = new short[this.sampleSize];
-            double[] toTransform = new double[this.sampleSize];
-            while (FluteGlobalValue.FLUTE_ON_WORKING == true) {
-                int bufferReadResult = audioRecord.read(audioData, 0,
-                        this.sampleSize);
-                for (int i = 0; i < this.sampleSize && i < bufferReadResult; i++) {
-                    /*
-                     * Know the PCM-Decibel transform formula from the following
-                     * site: http://stackoverflow.com/questions/2917762
-                     * /android-pcm-bytes But I am not sure this formula is
-                     * right or wrong.
-                     */
-
-                    double f = 20 * Math.log10(toTransform[i]);
-                    if (audioData[i] > 0 && i == 4000) {
-                        Log.i(FluteConstant.APP_TAG, audioData[i] + "");
-                        // Log.i("max", 20 * Math.log(0.9d) + "");
-                    }
-                    // Log.i("hello", 20 * Math.log10(0.1 / 32767) + "");
-                    if (f > max) {
-                        max = f;
-                        // Log.i("max", f + "");
-                    }
-
-                    // 16
-                    // bit
+            double[] transform = new double[this.sampleSize];
+            while (true) {
+                if (FluteGlobalValue.FLUTE_ON_WORKING == false) {
+                    break;
                 }
+                if (FluteGlobalValue.FLUTE_ON_PAUSE == false) {
+                    int bufferReadResult = audioRecord.read(audioData, 0,
+                            this.sampleSize);
+                    for (int i = 0; i < this.sampleSize && i < bufferReadResult; i++) {
+                        /*
+                         * Learn the PCM-Decibel transform formula from the
+                         * following site:
+                         * http://stackoverflow.com/questions/2917762
+                         * /android-pcm-bytes But I know my implementation is
+                         * wrong.
+                         */
 
-                FluteGlobalValue.getMotionEvent();
+                        transform[i] = 20d * Math
+                                .log10((Math.abs(audioData[i]) / MAX_ABSOLUTE_PCM_VALUE));
+                    }
+                    double averageDecibel = 0.0;
+                    if (transform != null) {
+                        for (int i = 0; i < transform.length; i++) {
+                            averageDecibel += transform[i];
+                        }
+                        averageDecibel = this.DECIBEL_ADJUST
+                                + (averageDecibel / transform.length);
+                        if (averageDecibel > 90) {
+                            this.publishProgress(averageDecibel);
+                        }
+                    }
+
+                    FluteGlobalValue.getMotionEvent();
+                }
             }
+
+            Log.i(FluteConstant.APP_TAG, "Leave recording status");
 
         } catch (Throwable t) {
             Log.e(FluteConstant.APP_TAG, "Recording Failed", t);
         }
+        return null;
+    }
+
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+    }
+
+    @Override
+    protected void onProgressUpdate(Double... values) {
+        // TODO Auto-generated method stub
+        super.onProgressUpdate(values);
+        Log.i(FluteConstant.APP_TAG, "" + values[0]);
     }
 
     @Override

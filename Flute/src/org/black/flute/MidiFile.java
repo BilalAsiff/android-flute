@@ -4,20 +4,6 @@ import java.io.*;
 import java.util.*;
 
 public class MidiFile {
-
-	// Note lengths
-	// We are working with 32 ticks to the crotchet. So
-	// all the other note lengths can be derived from this
-	// basic figure. Note that the longest note we can
-	// represent with this code is one tick short of a
-	// two semibreves (i.e., 8 crotchets)
-
-	static final int SEMIQUAVER = 4;
-	static final int QUAVER = 8;
-	static final int CROTCHET = 16;
-	static final int MINIM = 32;
-	static final int SEMIBREVE = 64;
-
 	// Standard MIDI file header, for one-track file
 	// 4D, 54... are just magic numbers to identify the
 	// headers
@@ -215,54 +201,5 @@ public class MidiFile {
 				lastWasRest = false;
 			}
 		}
-	}
-
-	/**
-	 * Test method ��creates a file test1.mid when the class is executed
-	 */
-	public static void main(String[] args) throws Exception {
-		System.err.println(System.currentTimeMillis());
-		MidiFile mf = new MidiFile();
-
-		// Test 1 ��play a C major chord
-		mf.progChange(70);
-		// Turn on all three notes at start-of-track (delta=0)
-		mf.noteOn(0, 60, 127);
-
-		mf.noteOff(200, 60);
-		// mf.noteOn (73, 67, 127);
-
-		// Turn off all three notes after one minim.
-		// NOTE delta value is cumulative ��only _one_ of
-		// these note-offs has a non-zero delta. The second and
-		// third events are relative to the first
-		// mf.noteOff (0, 60);
-		// mf.noteOff (79, 64);
-		// mf.noteOff (73, 67);
-
-		// Test 2 ��play a scale using noteOnOffNow
-		// We don't need any delta values here, so long as one
-		// note comes straight after the previous one
-		/*
-		 * mf.noteOnOffNow (QUAVER, 60, 127); mf.noteOnOffNow (QUAVER, 62, 127);
-		 * mf.noteOnOffNow (QUAVER, 64, 127); mf.noteOnOffNow (QUAVER, 65, 127);
-		 * mf.noteOnOffNow (QUAVER, 67, 127); mf.noteOnOffNow (QUAVER, 69, 127);
-		 * mf.noteOnOffNow (QUAVER, 71, 127); mf.noteOnOffNow (QUAVER, 72, 127);
-		 */
-		// Test 3 ��play a short tune using noteSequenceFixedVelocity
-		// Note the rest inserted with a note value of -1
-		/*
-		 * int[] sequence = new int[] { 60, QUAVER + SEMIQUAVER, 65, SEMIQUAVER,
-		 * 70, CROTCHET + QUAVER, 69, QUAVER, 65, QUAVER / 3, 62, QUAVER / 3,
-		 * 67, QUAVER / 3, 72, MINIM + QUAVER, -1, SEMIQUAVER, 72, SEMIQUAVER,
-		 * 76, MINIM, };
-		 */
-		// What the heck ��use a different instrument for a change
-		// mf.progChange (75);
-
-		// mf.noteSequenceFixedVelocity (sequence, 127);
-
-		mf.writeToFile("test1.mid");
-		System.err.println(System.currentTimeMillis());
 	}
 }

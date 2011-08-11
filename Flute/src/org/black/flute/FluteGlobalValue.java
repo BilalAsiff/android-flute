@@ -3,7 +3,8 @@ package org.black.flute;
 import android.view.MotionEvent;
 
 public class FluteGlobalValue {
-    public static boolean FLUTE_ON_WORKING = false;
+    public static boolean FLUTE_ON_WORKING = true;
+    public static boolean FLUTE_ON_PAUSE = false;
     
     private static MotionEvent motionEvent;
 
