@@ -24,7 +24,7 @@ public class FluteActivity extends Activity {
         fluteView.setOnTouchListener(fluteOnTouchListener);
         this.setContentView(fluteView);
         
-        this.audioInput = new FluteAudioInput();
+        this.audioInput = new FluteAudioInput(fluteView);
         audioInput.execute();
     }
 
