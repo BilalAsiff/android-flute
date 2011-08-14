@@ -58,8 +58,9 @@ public class FluteSurfaceView extends SurfaceView implements
     /**
      * A public method for audio input to draw.
      */
-    public void draw(double audioVelocity) {
+    public int draw(double audioVelocity) {
         Canvas canvas = null;
+        int result = 0;
         try {
             canvas = holder.lockCanvas(null);
 
@@ -93,7 +94,7 @@ public class FluteSurfaceView extends SurfaceView implements
                                 - firstCircle.getX(), 2)
                                 + Math.pow(pointY - firstCircle.getY(), 2));
                         if (firstDistance >= 0
-                                && firstDistance < firstCircle.getRadius() - 5) {
+                                && firstDistance < firstCircle.getRadius()) {
                             touchOnFirstCircle = true;
                         }
 
@@ -101,7 +102,7 @@ public class FluteSurfaceView extends SurfaceView implements
                                 - secondCircle.getX(), 2)
                                 + Math.pow(pointY - secondCircle.getY(), 2));
                         if (secondDistance >= 0
-                                && secondDistance < secondCircle.getRadius() - 5) {
+                                && secondDistance < secondCircle.getRadius()) {
                             touchOnSecondCircle = true;
                         }
 
@@ -111,22 +112,26 @@ public class FluteSurfaceView extends SurfaceView implements
 
             if (touchOnFirstCircle == true && touchOnSecondCircle == true) {
                 // do
-                Log.i(FluteConstant.APP_TAG, "do");
+                result = FluteConstant.NOTE_VALUES[0];
             } else if (touchOnFirstCircle == false
                     && touchOnSecondCircle == true) {
                 // re
-                Log.i(FluteConstant.APP_TAG, "re");
+                result = FluteConstant.NOTE_VALUES[1];
             } else if (touchOnFirstCircle == true
                     && touchOnSecondCircle == false) {
                 // me
-                Log.i(FluteConstant.APP_TAG, "me");
+                result = FluteConstant.NOTE_VALUES[2];
             } else {
                 // fa
-                Log.i(FluteConstant.APP_TAG, "fa");
+                result = FluteConstant.NOTE_VALUES[3];
             }
+        } catch (Exception e) {
+            Log.e(FluteConstant.APP_TAG, "Detect touch error.", e);
+            result = 0;
         } finally {
             holder.unlockCanvasAndPost(canvas);
         }
+        return result;
     }
 
     private class Circle {
