@@ -1,15 +1,19 @@
 package org.black.flute;
 
+import java.io.FileInputStream;
+
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.util.Log;
 
 /**
  * Class to accept record input and notify canvas to draw or not.
+ * 
  * @author black
- *
+ * 
  */
 public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
     private final int sampleSize = 8196;
@@ -17,9 +21,9 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
     private final double MAX_ABSOLUTE_PCM_VALUE = 32768;
 
     private AudioRecord audioRecord = null;
-    
+
     private FluteSurfaceView fluteSurfaceView;
-    
+
     public FluteAudioInput(FluteSurfaceView fluteSurfaceView) {
         this.fluteSurfaceView = fluteSurfaceView;
     }
@@ -97,10 +101,41 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
     }
 
     @Override
-    protected void onProgressUpdate(Double... values) {
+    protected synchronized void onProgressUpdate(Double... values) {
         super.onProgressUpdate(values);
-        Log.i(FluteConstant.APP_TAG, "" + values[0]);
-        this.fluteSurfaceView.draw(values[0]);
+        double inputDecible = values[0];
+        Log.d(FluteConstant.APP_TAG, "" + inputDecible);
+
+        int noteValue = this.fluteSurfaceView.draw(inputDecible);
+        if (inputDecible > 90 && noteValue != 0) {
+            try {
+                if (noteValue != FluteGlobalValue.CURRENT_NOTE) {
+                    closeOldNote();
+
+                    MediaPlayer mediaPlayer = new MediaPlayer();
+                    FileInputStream fis = this.fluteSurfaceView.getContext()
+                            .openFileInput(noteValue + ".mid");
+                    FluteGlobalValue.CURRENT_NOTE = noteValue;
+                    FluteGlobalValue.addMediaPlayer(mediaPlayer);
+                    mediaPlayer.setDataSource(fis.getFD());
+                    fis.close();
+                    
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+                    mediaPlayer.setVolume(0.5f, 0.5f);
+
+                    Thread.sleep(50l);
+
+                    mediaPlayer.setVolume(1.0f, 1.0f);
+                }
+            } catch (Exception e) {
+                Log.e(FluteConstant.APP_TAG, "Unable to play Midi file.", e);
+            }
+        } else {
+            closeOldNote();
+            FluteGlobalValue.CURRENT_NOTE = 0;
+        }
+
     }
 
     @Override
@@ -111,6 +146,23 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
                 this.audioRecord.release();
             } catch (Exception e) {
                 Log.e(FluteConstant.APP_TAG, "Release AudioRecored Fail!", e);
+            }
+        }
+    }
+    
+    private void closeOldNote() {
+        MediaPlayer oldMediaPlayer = FluteGlobalValue.remove();
+
+        if (oldMediaPlayer != null) {
+            try {
+                oldMediaPlayer.setVolume(0.5f, 0.5f);
+                oldMediaPlayer.pause();
+                oldMediaPlayer.stop();
+                oldMediaPlayer.release();
+                oldMediaPlayer = null;
+            } catch (Exception e) {
+                Log.e(FluteConstant.APP_TAG,
+                        "Unable to realease MediaPlayer.", e);
             }
         }
     }

@@ -1,6 +1,9 @@
 package org.black.flute;
 
+import java.io.FileOutputStream;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -16,6 +19,24 @@ public class FluteActivity extends Activity {
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        
+        for (int i = 0; i < FluteConstant.NOTE_VALUES.length; i++) {
+            String fileName = FluteConstant.NOTE_VALUES[i] + ".mid";
+            try {
+                MidiFile midiFile = new MidiFile();
+                midiFile.progChange(73);
+                midiFile.noteOnOffNow(500, FluteConstant.NOTE_VALUES[i], 127);
+                
+                FileOutputStream fileOutputStream = openFileOutput(fileName,
+                        Context.MODE_PRIVATE);
+                midiFile.writeToFile(fileOutputStream);
+                fileOutputStream.close();
+                
+                FluteGlobalValue.noteFilePathPairs.put(i, fileName);
+            } catch (Exception e) {
+                Log.e(FluteConstant.APP_TAG, "Create MidiFile Fail.", e);
+            }
+        }
 
         super.onCreate(savedInstanceState);
 
@@ -23,7 +44,7 @@ public class FluteActivity extends Activity {
         FluteOnTouchListener fluteOnTouchListener = new FluteOnTouchListener();
         fluteView.setOnTouchListener(fluteOnTouchListener);
         this.setContentView(fluteView);
-        
+
         this.audioInput = new FluteAudioInput(fluteView);
         audioInput.execute();
     }

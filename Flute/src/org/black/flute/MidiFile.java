@@ -2,7 +2,9 @@ package org.black.flute;
 
 import java.io.*;
 import java.util.*;
-
+/*
+ * http://kevinboone.net/javamidi.html
+ */
 public class MidiFile {
 	// Standard MIDI file header, for one-track file
 	// 4D, 54... are just magic numbers to identify the
