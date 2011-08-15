@@ -38,9 +38,9 @@ public class FluteSurfaceView extends SurfaceView implements
         Log.i(FluteConstant.APP_TAG, "Screen width: " + this.screenWidth);
         Log.i(FluteConstant.APP_TAG, "Screen height: " + this.screenHeight);
 
-        this.firstCircle = new Circle(screenWidth * 0.67f,
-                screenHeight * 0.33f, pointRadius);
-        this.secondCircle = new Circle(screenWidth * 0.33f,
+        this.firstCircle = new Circle(screenWidth * 0.75f,
+                screenHeight * 0.25f, pointRadius);
+        this.secondCircle = new Circle(screenWidth * 0.25f,
                 screenHeight * 0.67f, pointRadius);
         this.bottomSemiCircle = new Circle(screenWidth / 2, screenHeight,
                 screenWidth / 14);
@@ -64,22 +64,25 @@ public class FluteSurfaceView extends SurfaceView implements
         try {
             canvas = holder.lockCanvas(null);
 
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            
+            //Clear canvas
+            paint.setColor(Color.BLACK);
+            canvas.drawRect(0, 0, this.screenWidth, this.screenHeight, paint);
+            
             boolean touchOnFirstCircle = false;
             boolean touchOnSecondCircle = false;
 
-            Paint mPaint = new Paint();
-            mPaint.setAntiAlias(true);
-            mPaint.setColor(Color.BLUE);
-            canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
-                    firstCircle.getRadius(), mPaint);
-            canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
-                    secondCircle.getRadius(), mPaint);
-
+            paint.setColor(Color.BLUE);
+            
             Path semiCirclePath = new Path();
             semiCirclePath.addCircle(bottomSemiCircle.getX(),
                     bottomSemiCircle.getY(), bottomSemiCircle.getRadius(),
                     Path.Direction.CW);
-            canvas.drawPath(semiCirclePath, mPaint);
+            
+            canvas.drawPath(semiCirclePath, paint);
+            
 
             MotionEvent motionEvent = FluteGlobalValue.getMotionEvent();
             if (motionEvent != null
@@ -109,20 +112,42 @@ public class FluteSurfaceView extends SurfaceView implements
                     }
                 }
             }
+            
+            //Draw circle and border
+            if (touchOnFirstCircle == true) {
+                paint.setColor(Color.WHITE);
+                canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
+                        firstCircle.getRadius() + 5, paint);
+                
+                paint.setColor(Color.argb(255, 102, 171, 255));
+            } else {
+                paint.setColor(Color.argb(255, 0, 113, 255));
+            }
+            canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
+                    firstCircle.getRadius(), paint);
+            
+            if (touchOnSecondCircle == true) {
+                paint.setColor(Color.WHITE);
+                canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
+                        secondCircle.getRadius() + 5, paint);
+                
+                paint.setColor(Color.argb(255, 102, 171, 255));
+            } else {
+                paint.setColor(Color.argb(255, 0, 113, 255));
+            }
+            canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
+                    secondCircle.getRadius(), paint);
 
+            //Compute note value
             if (touchOnFirstCircle == true && touchOnSecondCircle == true) {
-                // do
                 result = FluteConstant.NOTE_VALUES[0];
             } else if (touchOnFirstCircle == false
                     && touchOnSecondCircle == true) {
-                // re
                 result = FluteConstant.NOTE_VALUES[1];
             } else if (touchOnFirstCircle == true
                     && touchOnSecondCircle == false) {
-                // me
                 result = FluteConstant.NOTE_VALUES[2];
             } else {
-                // fa
                 result = FluteConstant.NOTE_VALUES[3];
             }
         } catch (Exception e) {

@@ -73,15 +73,14 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
                          */
 
                         transform[i] = 20d * Math
-                                .log10((Math.abs(audioData[i]) / MAX_ABSOLUTE_PCM_VALUE));
+                                .log10((Math.abs(audioData[i])));
                     }
-                    double averageDecibel = 0.0;
+                    double averageDecibel = 0.0d;
                     if (transform != null) {
-                        for (int i = 0; i < transform.length; i++) {
+                        for (int i = 0; i < this.sampleSize; i++) {
                             averageDecibel += transform[i];
                         }
-                        averageDecibel = this.DECIBEL_ADJUST
-                                + (averageDecibel / transform.length);
+                        averageDecibel = averageDecibel / transform.length;
                         this.publishProgress(averageDecibel);
                     }
                 }
@@ -107,7 +106,7 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
         Log.d(FluteConstant.APP_TAG, "" + inputDecible);
 
         int noteValue = this.fluteSurfaceView.draw(inputDecible);
-        if (inputDecible > 90 && noteValue != 0) {
+        if (inputDecible > FluteConstant.MIN_AUDIO_PRESSURE && noteValue != 0) {
             try {
                 if (noteValue != FluteGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
@@ -119,7 +118,7 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
                     FluteGlobalValue.addMediaPlayer(mediaPlayer);
                     mediaPlayer.setDataSource(fis.getFD());
                     fis.close();
-                    
+
                     mediaPlayer.prepare();
                     mediaPlayer.start();
                     mediaPlayer.setVolume(0.5f, 0.5f);
@@ -149,20 +148,21 @@ public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
             }
         }
     }
-    
+
     private void closeOldNote() {
         MediaPlayer oldMediaPlayer = FluteGlobalValue.remove();
 
         if (oldMediaPlayer != null) {
             try {
                 oldMediaPlayer.setVolume(0.5f, 0.5f);
+                oldMediaPlayer.setVolume(0.2f, 0.2f);
                 oldMediaPlayer.pause();
                 oldMediaPlayer.stop();
                 oldMediaPlayer.release();
                 oldMediaPlayer = null;
             } catch (Exception e) {
-                Log.e(FluteConstant.APP_TAG,
-                        "Unable to realease MediaPlayer.", e);
+                Log.e(FluteConstant.APP_TAG, "Unable to realease MediaPlayer.",
+                        e);
             }
         }
     }
