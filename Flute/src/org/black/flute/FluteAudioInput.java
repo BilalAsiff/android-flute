@@ -17,8 +17,6 @@ import android.util.Log;
  */
 public class FluteAudioInput extends AsyncTask<Void, Double, Void> {
     private final int sampleSize = 8196;
-    private final double DECIBEL_ADJUST = 96;
-    private final double MAX_ABSOLUTE_PCM_VALUE = 32768;
 
     private AudioRecord audioRecord = null;
 
