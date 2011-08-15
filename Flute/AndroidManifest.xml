@@ -5,7 +5,7 @@
 	<uses-permission android:name="android.permission.RECORD_AUDIO"/>
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name=".flute.FluteActivity" android:label="@string/app_name"
+		<activity android:name=".pipe.PipeActivity" android:label="@string/app_name"
 			android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
