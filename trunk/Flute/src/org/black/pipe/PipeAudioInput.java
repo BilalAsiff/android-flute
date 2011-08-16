@@ -101,7 +101,6 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
     protected synchronized void onProgressUpdate(Double... values) {
         super.onProgressUpdate(values);
         double inputDecible = values[0];
-        Log.d(PipeConstant.APP_TAG, "" + inputDecible);
 
         int noteValue = this.fluteSurfaceView.draw(inputDecible);
         if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0) {
