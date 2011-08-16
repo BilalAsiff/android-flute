@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -66,24 +67,43 @@ public class PipeSurfaceView extends SurfaceView implements
 
             Paint paint = new Paint();
             paint.setAntiAlias(true);
-            
-            //Clear canvas
+
+            // Clear canvas
             paint.setColor(Color.BLACK);
             canvas.drawRect(0, 0, this.screenWidth, this.screenHeight, paint);
-            
+
             boolean touchOnFirstCircle = false;
             boolean touchOnSecondCircle = false;
 
-            paint.setColor(Color.BLUE);
-            
-            Path semiCirclePath = new Path();
-            semiCirclePath.addCircle(bottomSemiCircle.getX(),
-                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius(),
-                    Path.Direction.CW);
-            
-            canvas.drawPath(semiCirclePath, paint);
-            
+            if (audioVelocity > PipeConstant.MIN_AUDIO_PRESSURE) {
+                paint.setColor(Color.argb(255, 102, 171, 255));
+            } else {
+                paint.setColor(Color.argb(255, 0, 113, 255));
+            }
+            Path innerCirclePath = new Path();
+            Path outerCirclePath = new Path();
+            innerCirclePath.moveTo(
+                    bottomSemiCircle.getX() - bottomSemiCircle.getRadius(),
+                    bottomSemiCircle.getY());
+            innerCirclePath.quadTo(bottomSemiCircle.getX(),
+                    bottomSemiCircle.getY() - bottomSemiCircle.getRadius() * 1.5f,
+                    bottomSemiCircle.getX() + bottomSemiCircle.getRadius(),
+                    bottomSemiCircle.getY());
 
+            outerCirclePath.moveTo(
+                    bottomSemiCircle.getX() - (bottomSemiCircle.getRadius() * 2),
+                    bottomSemiCircle.getY());
+            outerCirclePath.quadTo(bottomSemiCircle.getX(),
+                    bottomSemiCircle.getY() - (bottomSemiCircle.getRadius() * 3),
+                    bottomSemiCircle.getX() + (bottomSemiCircle.getRadius() * 2),
+                    bottomSemiCircle.getY());
+            
+            paint.setStyle(Style.STROKE);
+            paint.setStrokeWidth(5);
+            canvas.drawPath(innerCirclePath, paint);
+            canvas.drawPath(outerCirclePath, paint);
+
+            paint.setStyle(Style.FILL);
             MotionEvent motionEvent = PipeGlobalValue.getMotionEvent();
             if (motionEvent != null
                     && motionEvent.getAction() != MotionEvent.ACTION_UP) {
@@ -112,25 +132,25 @@ public class PipeSurfaceView extends SurfaceView implements
                     }
                 }
             }
-            
-            //Draw circle and border
+
+            // Draw circle and border
             if (touchOnFirstCircle == true) {
                 paint.setColor(Color.WHITE);
                 canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
                         firstCircle.getRadius() + 5, paint);
-                
+
                 paint.setColor(Color.argb(255, 102, 171, 255));
             } else {
                 paint.setColor(Color.argb(255, 0, 113, 255));
             }
             canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
                     firstCircle.getRadius(), paint);
-            
+
             if (touchOnSecondCircle == true) {
                 paint.setColor(Color.WHITE);
                 canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
                         secondCircle.getRadius() + 5, paint);
-                
+
                 paint.setColor(Color.argb(255, 102, 171, 255));
             } else {
                 paint.setColor(Color.argb(255, 0, 113, 255));
@@ -138,7 +158,7 @@ public class PipeSurfaceView extends SurfaceView implements
             canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
                     secondCircle.getRadius(), paint);
 
-            //Compute note value
+            // Compute note value
             if (touchOnFirstCircle == true && touchOnSecondCircle == true) {
                 result = PipeConstant.NOTE_VALUES[0];
             } else if (touchOnFirstCircle == false
