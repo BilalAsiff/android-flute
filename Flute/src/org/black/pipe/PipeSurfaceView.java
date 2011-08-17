@@ -44,7 +44,7 @@ public class PipeSurfaceView extends SurfaceView implements
         this.secondCircle = new Circle(screenWidth * 0.25f,
                 screenHeight * 0.67f, pointRadius);
         this.bottomSemiCircle = new Circle(screenWidth / 2, screenHeight,
-                screenWidth / 14);
+                (screenWidth / 14) - 5);
     }
 
     @Override
@@ -89,9 +89,9 @@ public class PipeSurfaceView extends SurfaceView implements
                     Path.Direction.CW);
             
             outerCirclePath.addCircle(bottomSemiCircle.getX(),
-                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius() +15,
+                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius() + 15,
                     Path.Direction.CW);
-            
+
             paint.setStyle(Style.STROKE);
             paint.setStrokeWidth(5);
             canvas.drawPath(innerCirclePath, paint);
