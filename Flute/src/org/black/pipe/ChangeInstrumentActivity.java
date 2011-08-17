@@ -20,9 +20,8 @@ public class ChangeInstrumentActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        String[] instruments = { this.getString(R.string.INSTRUMENT_PICCOLO),
-                this.getString(R.string.INSTRUMENT_FLUTE),
-                this.getString(R.string.INSTRUMENT_RECORDER),
+        String[] instruments = { this.getString(R.string.INSTRUMENT_FLUTE),
+                this.getString(R.string.INSTRUMENT_PAN_FLUTE),
                 this.getString(R.string.INSTRUMENT_OCARINA) };
 
         ListView listView = new ListView(this);
@@ -37,15 +36,13 @@ public class ChangeInstrumentActivity extends Activity {
                 PipeConstant.INSTRUMENT_NUMBER,
                 PipeConstant.DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT);
 
-        int checkedPosition = 0;
+        int checkedPosition = 1;
         if (instrumentNumber == PipeConstant.MIDI_PIPE_INSTRUMENT_NUMBERT[0]) {
             checkedPosition = 0;
         } else if (instrumentNumber == PipeConstant.MIDI_PIPE_INSTRUMENT_NUMBERT[1]) {
             checkedPosition = 1;
         } else if (instrumentNumber == PipeConstant.MIDI_PIPE_INSTRUMENT_NUMBERT[2]) {
             checkedPosition = 2;
-        } else if (instrumentNumber == PipeConstant.MIDI_PIPE_INSTRUMENT_NUMBERT[3]) {
-            checkedPosition = 3;
         } else {
             checkedPosition = 1;
         }
@@ -62,8 +59,10 @@ public class ChangeInstrumentActivity extends Activity {
 
                 SharedPreferences sharedPreferences = getSharedPreferences(
                         PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
-                sharedPreferences.edit().putInt(PipeConstant.INSTRUMENT_NUMBER,
-                        instrumentNumber).commit();
+                sharedPreferences
+                        .edit()
+                        .putInt(PipeConstant.INSTRUMENT_NUMBER,
+                                instrumentNumber).commit();
                 finish();
             }
         });

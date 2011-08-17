@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class PipeGlobalValue {
@@ -45,11 +46,23 @@ public class PipeGlobalValue {
         mediaPlayers.add(mediaPlayer);
     }
 
-    public static MediaPlayer remove() {
+    public static MediaPlayer removeMediaPlayer() {
         if (mediaPlayers != null && mediaPlayers.size() > 0) {
             return mediaPlayers.remove(0);
         }
         return null;
     }
-
+    
+    public static void resetMediaPlayers() {
+        if (mediaPlayers != null) {
+            try {
+                mediaPlayers.clear();
+            } catch (Exception e) {
+                Log.e(PipeConstant.APP_TAG, "Clear MediaPlayers fail!", e);
+            }
+            mediaPlayers = null;
+        }
+        mediaPlayers = new Vector<MediaPlayer>();
+        
+    }
 }
