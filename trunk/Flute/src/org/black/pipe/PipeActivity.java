@@ -28,30 +28,6 @@ public class PipeActivity extends Activity {
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(
-                PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
-        int instrumentNumber = sharedPreferences.getInt(
-                PipeConstant.INSTRUMENT_NUMBER,
-                PipeConstant.DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT);
-        
-        for (int i = 0; i < PipeConstant.NOTE_VALUES.length; i++) {
-            String fileName = PipeConstant.NOTE_VALUES[i] + ".mid";
-            try {
-                MidiFile midiFile = new MidiFile();
-                midiFile.progChange(instrumentNumber);
-                midiFile.noteOnOffNow(100, PipeConstant.NOTE_VALUES[i], 127);
-
-                FileOutputStream fileOutputStream = openFileOutput(fileName,
-                        Context.MODE_PRIVATE);
-                midiFile.writeToFile(fileOutputStream);
-                fileOutputStream.close();
-
-                PipeGlobalValue.noteFilePathPairs.put(i, fileName);
-            } catch (Exception e) {
-                Log.e(PipeConstant.APP_TAG, "Create MidiFile Fail.", e);
-            }
-        }
-
         super.onCreate(savedInstanceState);
 
         PipeSurfaceView pipeView = new PipeSurfaceView(this);
@@ -74,6 +50,33 @@ public class PipeActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
+        int instrumentNumber = sharedPreferences.getInt(
+                PipeConstant.INSTRUMENT_NUMBER,
+                PipeConstant.DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT);
+        for (int i = 0; i < PipeConstant.NOTE_VALUES.length; i++) {
+            String fileName = PipeConstant.NOTE_VALUES[i] + ".mid";
+            try {
+                MidiFile midiFile = new MidiFile();
+                midiFile.progChange(instrumentNumber);
+                midiFile.noteOn (0, PipeConstant.NOTE_VALUES[i], 127);
+                
+                midiFile.noteOff(50, PipeConstant.NOTE_VALUES[i]);
+                FileOutputStream fileOutputStream = openFileOutput(fileName,
+                        Context.MODE_WORLD_WRITEABLE);
+                
+                midiFile.writeToFile(fileOutputStream);
+                fileOutputStream.close();
+
+                PipeGlobalValue.noteFilePathPairs.put(i, fileName);
+            } catch (Exception e) {
+                Log.e(PipeConstant.APP_TAG, "Create MidiFile Fail.", e);
+            }
+        }
+        
+        PipeGlobalValue.resetMediaPlayers();
         PipeGlobalValue.PIPE_ON_WORKING = true;
     }
 

@@ -64,105 +64,107 @@ public class PipeSurfaceView extends SurfaceView implements
         int result = 0;
         try {
             canvas = holder.lockCanvas(null);
-
-            Paint paint = new Paint();
-            paint.setAntiAlias(true);
-
-            // Clear canvas
-            paint.setColor(Color.BLACK);
-            canvas.drawRect(0, 0, this.screenWidth, this.screenHeight, paint);
-
-            boolean touchOnFirstCircle = false;
-            boolean touchOnSecondCircle = false;
-
-            if (audioVelocity > PipeConstant.MIN_AUDIO_PRESSURE) {
-                paint.setColor(Color.argb(255, 102, 171, 255));
-            } else {
-                paint.setColor(Color.argb(255, 0, 113, 255));
-            }
-            Path innerCirclePath = new Path();
-            Path outerCirclePath = new Path();
             
+            if (canvas != null) {
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
 
-            innerCirclePath.addCircle(bottomSemiCircle.getX(),
-                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius(),
-                    Path.Direction.CW);
-            
-            outerCirclePath.addCircle(bottomSemiCircle.getX(),
-                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius() + 15,
-                    Path.Direction.CW);
+                // Clear canvas
+                paint.setColor(Color.BLACK);
+                canvas.drawRect(0, 0, this.screenWidth, this.screenHeight, paint);
 
-            paint.setStyle(Style.STROKE);
-            paint.setStrokeWidth(5);
-            canvas.drawPath(innerCirclePath, paint);
-            canvas.drawPath(outerCirclePath, paint);
+                boolean touchOnFirstCircle = false;
+                boolean touchOnSecondCircle = false;
 
-            paint.setStyle(Style.FILL);
-            MotionEvent motionEvent = PipeGlobalValue.getMotionEvent();
-            if (motionEvent != null
-                    && motionEvent.getAction() != MotionEvent.ACTION_UP) {
-                int pointCount = motionEvent.getPointerCount();
-                if (pointCount > 0) {
-                    for (int i = 0; i < pointCount; i++) {
-                        float pointX = motionEvent.getX(i);
-                        float pointY = motionEvent.getY(i);
+                if (audioVelocity > PipeConstant.MIN_AUDIO_PRESSURE) {
+                    paint.setColor(Color.argb(255, 102, 171, 255));
+                } else {
+                    paint.setColor(Color.argb(255, 0, 113, 255));
+                }
+                Path innerCirclePath = new Path();
+                Path outerCirclePath = new Path();
+                
 
-                        double firstDistance = Math.sqrt(Math.pow(pointX
-                                - firstCircle.getX(), 2)
-                                + Math.pow(pointY - firstCircle.getY(), 2));
-                        if (firstDistance >= 0
-                                && firstDistance < firstCircle.getRadius()) {
-                            touchOnFirstCircle = true;
+                innerCirclePath.addCircle(bottomSemiCircle.getX(),
+                        bottomSemiCircle.getY(), bottomSemiCircle.getRadius(),
+                        Path.Direction.CW);
+                
+                outerCirclePath.addCircle(bottomSemiCircle.getX(),
+                        bottomSemiCircle.getY(), bottomSemiCircle.getRadius() + 15,
+                        Path.Direction.CW);
+
+                paint.setStyle(Style.STROKE);
+                paint.setStrokeWidth(5);
+                canvas.drawPath(innerCirclePath, paint);
+                canvas.drawPath(outerCirclePath, paint);
+
+                paint.setStyle(Style.FILL);
+                MotionEvent motionEvent = PipeGlobalValue.getMotionEvent();
+                if (motionEvent != null
+                        && motionEvent.getAction() != MotionEvent.ACTION_UP) {
+                    int pointCount = motionEvent.getPointerCount();
+                    if (pointCount > 0) {
+                        for (int i = 0; i < pointCount; i++) {
+                            float pointX = motionEvent.getX(i);
+                            float pointY = motionEvent.getY(i);
+
+                            double firstDistance = Math.sqrt(Math.pow(pointX
+                                    - firstCircle.getX(), 2)
+                                    + Math.pow(pointY - firstCircle.getY(), 2));
+                            if (firstDistance >= 0
+                                    && firstDistance < firstCircle.getRadius()) {
+                                touchOnFirstCircle = true;
+                            }
+
+                            double secondDistance = Math.sqrt(Math.pow(pointX
+                                    - secondCircle.getX(), 2)
+                                    + Math.pow(pointY - secondCircle.getY(), 2));
+                            if (secondDistance >= 0
+                                    && secondDistance < secondCircle.getRadius()) {
+                                touchOnSecondCircle = true;
+                            }
+
                         }
-
-                        double secondDistance = Math.sqrt(Math.pow(pointX
-                                - secondCircle.getX(), 2)
-                                + Math.pow(pointY - secondCircle.getY(), 2));
-                        if (secondDistance >= 0
-                                && secondDistance < secondCircle.getRadius()) {
-                            touchOnSecondCircle = true;
-                        }
-
                     }
                 }
-            }
 
-            // Draw circle and border
-            if (touchOnFirstCircle == true) {
-                paint.setColor(Color.WHITE);
+                // Draw circle and border
+                if (touchOnFirstCircle == true) {
+                    paint.setColor(Color.WHITE);
+                    canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
+                            firstCircle.getRadius() + 5, paint);
+
+                    paint.setColor(Color.argb(255, 102, 171, 255));
+                } else {
+                    paint.setColor(Color.argb(255, 0, 113, 255));
+                }
                 canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
-                        firstCircle.getRadius() + 5, paint);
+                        firstCircle.getRadius(), paint);
 
-                paint.setColor(Color.argb(255, 102, 171, 255));
-            } else {
-                paint.setColor(Color.argb(255, 0, 113, 255));
-            }
-            canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
-                    firstCircle.getRadius(), paint);
+                if (touchOnSecondCircle == true) {
+                    paint.setColor(Color.WHITE);
+                    canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
+                            secondCircle.getRadius() + 5, paint);
 
-            if (touchOnSecondCircle == true) {
-                paint.setColor(Color.WHITE);
+                    paint.setColor(Color.argb(255, 102, 171, 255));
+                } else {
+                    paint.setColor(Color.argb(255, 0, 113, 255));
+                }
                 canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
-                        secondCircle.getRadius() + 5, paint);
+                        secondCircle.getRadius(), paint);
 
-                paint.setColor(Color.argb(255, 102, 171, 255));
-            } else {
-                paint.setColor(Color.argb(255, 0, 113, 255));
-            }
-            canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
-                    secondCircle.getRadius(), paint);
-
-            // Compute note value
-            if (touchOnFirstCircle == true && touchOnSecondCircle == true) {
-                result = PipeConstant.NOTE_VALUES[0];
-            } else if (touchOnFirstCircle == false
-                    && touchOnSecondCircle == true) {
-                result = PipeConstant.NOTE_VALUES[1];
-            } else if (touchOnFirstCircle == true
-                    && touchOnSecondCircle == false) {
-                result = PipeConstant.NOTE_VALUES[2];
-            } else {
-                result = PipeConstant.NOTE_VALUES[3];
+                // Compute note value
+                if (touchOnFirstCircle == true && touchOnSecondCircle == true) {
+                    result = PipeConstant.NOTE_VALUES[0];
+                } else if (touchOnFirstCircle == false
+                        && touchOnSecondCircle == true) {
+                    result = PipeConstant.NOTE_VALUES[1];
+                } else if (touchOnFirstCircle == true
+                        && touchOnSecondCircle == false) {
+                    result = PipeConstant.NOTE_VALUES[2];
+                } else {
+                    result = PipeConstant.NOTE_VALUES[3];
+                }
             }
         } catch (Exception e) {
             Log.e(PipeConstant.APP_TAG, "Detect touch error.", e);

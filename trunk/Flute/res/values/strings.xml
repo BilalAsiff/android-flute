@@ -6,4 +6,5 @@
     <string name="INSTRUMENT_FLUTE">Flute</string>
     <string name="INSTRUMENT_RECORDER">Recorder</string>
     <string name="INSTRUMENT_OCARINA">Ocarina</string>
+    <string name="INSTRUMENT_PAN_FLUTE">Pan Flute</string>
 </resources>

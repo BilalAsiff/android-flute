@@ -10,9 +10,9 @@ public interface PipeConstant {
     String SHARED_PERFERENCE = "pipe.sharedPreference";
     String INSTRUMENT_NUMBER = "Instrument_number";
 
-    int[] MIDI_PIPE_INSTRUMENT_NUMBERT = { 72, 73, 74, 79 };
-    int DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT = MIDI_PIPE_INSTRUMENT_NUMBERT[1];
-    String[] MIDI_PIPE_INSTRUMENT_NAME = { "Picclo", "Flute", "Recorder",
+    int[] MIDI_PIPE_INSTRUMENT_NUMBERT = { 74, 76, 79 };
+    int DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT = MIDI_PIPE_INSTRUMENT_NUMBERT[0];
+    String[] MIDI_PIPE_INSTRUMENT_NAME = { "Flute", "Pan Flute",
             "Ocarina" };
-    String DEFAULT_MIDI_PIPE_INSTRUMENT_NAME = MIDI_PIPE_INSTRUMENT_NAME[1];
+    String DEFAULT_MIDI_PIPE_INSTRUMENT_NAME = MIDI_PIPE_INSTRUMENT_NAME[0];
 }

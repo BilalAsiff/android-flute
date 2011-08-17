@@ -115,7 +115,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                     PipeGlobalValue.addMediaPlayer(mediaPlayer);
                     mediaPlayer.setDataSource(fis.getFD());
                     fis.close();
-
+                    
                     mediaPlayer.prepare();
                     mediaPlayer.start();
                     mediaPlayer.setVolume(0.5f, 0.5f);
@@ -147,7 +147,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
     }
 
     private void closeOldNote() {
-        MediaPlayer oldMediaPlayer = PipeGlobalValue.remove();
+        MediaPlayer oldMediaPlayer = PipeGlobalValue.removeMediaPlayer();
 
         if (oldMediaPlayer != null) {
             try {
