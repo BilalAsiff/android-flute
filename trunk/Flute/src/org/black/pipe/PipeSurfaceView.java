@@ -82,21 +82,15 @@ public class PipeSurfaceView extends SurfaceView implements
             }
             Path innerCirclePath = new Path();
             Path outerCirclePath = new Path();
-            innerCirclePath.moveTo(
-                    bottomSemiCircle.getX() - bottomSemiCircle.getRadius(),
-                    bottomSemiCircle.getY());
-            innerCirclePath.quadTo(bottomSemiCircle.getX(),
-                    bottomSemiCircle.getY() - bottomSemiCircle.getRadius() * 1.5f,
-                    bottomSemiCircle.getX() + bottomSemiCircle.getRadius(),
-                    bottomSemiCircle.getY());
+            
 
-            outerCirclePath.moveTo(
-                    bottomSemiCircle.getX() - (bottomSemiCircle.getRadius() * 2),
-                    bottomSemiCircle.getY());
-            outerCirclePath.quadTo(bottomSemiCircle.getX(),
-                    bottomSemiCircle.getY() - (bottomSemiCircle.getRadius() * 3),
-                    bottomSemiCircle.getX() + (bottomSemiCircle.getRadius() * 2),
-                    bottomSemiCircle.getY());
+            innerCirclePath.addCircle(bottomSemiCircle.getX(),
+                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius(),
+                    Path.Direction.CW);
+            
+            outerCirclePath.addCircle(bottomSemiCircle.getX(),
+                    bottomSemiCircle.getY(), bottomSemiCircle.getRadius() +15,
+                    Path.Direction.CW);
             
             paint.setStyle(Style.STROKE);
             paint.setStrokeWidth(5);
