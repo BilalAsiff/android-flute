@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">長笛</string>
+    <string name="CHANGE_INSTRUMENT">變換樂器</string>
+    <string name="INSTRUMENT_PICCOLO">短笛</string>
+    <string name="INSTRUMENT_FLUTE">長笛</string>
+    <string name="INSTRUMENT_RECORDER">直笛</string>
+    <string name="INSTRUMENT_OCARINA">陶笛</string>
+</resources>

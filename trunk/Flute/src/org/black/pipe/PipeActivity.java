@@ -2,16 +2,24 @@ package org.black.pipe;
 
 import java.io.FileOutputStream;
 
+import org.black.R;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class PipeActivity extends Activity {
 
     private PipeAudioInput audioInput = null;
+
+    private final static int MENU_SET_INSTRUMENT = Menu.FIRST;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -19,19 +27,25 @@ public class PipeActivity extends Activity {
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
+        int instrumentNumber = sharedPreferences.getInt(
+                PipeConstant.INSTRUMENT_NUMBER,
+                PipeConstant.DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT);
         
         for (int i = 0; i < PipeConstant.NOTE_VALUES.length; i++) {
             String fileName = PipeConstant.NOTE_VALUES[i] + ".mid";
             try {
                 MidiFile midiFile = new MidiFile();
-                midiFile.progChange(74);
-                midiFile.noteOnOffNow(500, PipeConstant.NOTE_VALUES[i], 127);
-                
+                midiFile.progChange(instrumentNumber);
+                midiFile.noteOnOffNow(100, PipeConstant.NOTE_VALUES[i], 127);
+
                 FileOutputStream fileOutputStream = openFileOutput(fileName,
                         Context.MODE_PRIVATE);
                 midiFile.writeToFile(fileOutputStream);
                 fileOutputStream.close();
-                
+
                 PipeGlobalValue.noteFilePathPairs.put(i, fileName);
             } catch (Exception e) {
                 Log.e(PipeConstant.APP_TAG, "Create MidiFile Fail.", e);
@@ -89,4 +103,28 @@ public class PipeActivity extends Activity {
             }
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.add(0, MENU_SET_INSTRUMENT, 0, R.string.CHANGE_INSTRUMENT);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+        case MENU_SET_INSTRUMENT:
+            Intent intent = new Intent();
+            intent.setClass(PipeActivity.this, ChangeInstrumentActivity.class);
+
+            Bundle extras = new Bundle();
+            intent.putExtras(extras);
+            startActivity(intent);
+            break;
+        }
+        return true;
+    }
+
 }
