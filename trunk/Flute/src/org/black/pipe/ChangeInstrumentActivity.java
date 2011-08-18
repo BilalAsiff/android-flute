@@ -13,6 +13,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+/**
+ * Activity used to change instrument.
+ * @author black
+ *
+ */
 public class ChangeInstrumentActivity extends Activity {
 
     @Override
@@ -24,6 +29,7 @@ public class ChangeInstrumentActivity extends Activity {
                 this.getString(R.string.INSTRUMENT_PAN_FLUTE),
                 this.getString(R.string.INSTRUMENT_OCARINA) };
 
+        //To create a list view with radio button selected function.
         ListView listView = new ListView(this);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -66,7 +72,7 @@ public class ChangeInstrumentActivity extends Activity {
                 finish();
             }
         });
-
+        
         setContentView(listView);
     }
 

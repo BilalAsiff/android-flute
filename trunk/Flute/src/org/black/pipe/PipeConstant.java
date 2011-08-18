@@ -1,5 +1,10 @@
 package org.black.pipe;
 
+/**
+ * Interface to declare Global constant values.
+ * @author black
+ *
+ */
 public interface PipeConstant {
     String APP_TAG = "org.black.Pipe";
 

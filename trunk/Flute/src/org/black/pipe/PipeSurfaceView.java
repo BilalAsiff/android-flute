@@ -11,6 +11,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * To draw hole and compute note value.
+ * 
+ * @author black
+ * 
+ */
 public class PipeSurfaceView extends SurfaceView implements
         SurfaceHolder.Callback {
 
@@ -64,14 +70,15 @@ public class PipeSurfaceView extends SurfaceView implements
         int result = 0;
         try {
             canvas = holder.lockCanvas(null);
-            
+
             if (canvas != null) {
                 Paint paint = new Paint();
                 paint.setAntiAlias(true);
 
                 // Clear canvas
                 paint.setColor(Color.BLACK);
-                canvas.drawRect(0, 0, this.screenWidth, this.screenHeight, paint);
+                canvas.drawRect(0, 0, this.screenWidth, this.screenHeight,
+                        paint);
 
                 boolean touchOnFirstCircle = false;
                 boolean touchOnSecondCircle = false;
@@ -83,15 +90,14 @@ public class PipeSurfaceView extends SurfaceView implements
                 }
                 Path innerCirclePath = new Path();
                 Path outerCirclePath = new Path();
-                
 
                 innerCirclePath.addCircle(bottomSemiCircle.getX(),
                         bottomSemiCircle.getY(), bottomSemiCircle.getRadius(),
                         Path.Direction.CW);
-                
+
                 outerCirclePath.addCircle(bottomSemiCircle.getX(),
-                        bottomSemiCircle.getY(), bottomSemiCircle.getRadius() + 15,
-                        Path.Direction.CW);
+                        bottomSemiCircle.getY(),
+                        bottomSemiCircle.getRadius() + 15, Path.Direction.CW);
 
                 paint.setStyle(Style.STROKE);
                 paint.setStrokeWidth(5);
@@ -116,11 +122,16 @@ public class PipeSurfaceView extends SurfaceView implements
                                 touchOnFirstCircle = true;
                             }
 
-                            double secondDistance = Math.sqrt(Math.pow(pointX
-                                    - secondCircle.getX(), 2)
-                                    + Math.pow(pointY - secondCircle.getY(), 2));
+                            double secondDistance = Math
+                                    .sqrt(Math.pow(
+                                            pointX - secondCircle.getX(), 2)
+                                            + Math.pow(
+                                                    pointY
+                                                            - secondCircle
+                                                                    .getY(), 2));
                             if (secondDistance >= 0
-                                    && secondDistance < secondCircle.getRadius()) {
+                                    && secondDistance < secondCircle
+                                            .getRadius()) {
                                 touchOnSecondCircle = true;
                             }
 
@@ -170,11 +181,20 @@ public class PipeSurfaceView extends SurfaceView implements
             Log.e(PipeConstant.APP_TAG, "Detect touch error.", e);
             result = 0;
         } finally {
-            holder.unlockCanvasAndPost(canvas);
+            try {
+                holder.unlockCanvasAndPost(canvas);
+            } catch (Exception e) {
+                Log.e(PipeConstant.APP_TAG, "unlockCanvasAsPost fail!", e);
+            }
         }
         return result;
     }
 
+    /**
+     * Private class to store circle information. 
+     * @author black
+     *
+     */
     private class Circle {
         private float x;
         private float y;

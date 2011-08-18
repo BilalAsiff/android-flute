@@ -11,6 +11,11 @@ import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.MotionEvent;
 
+/**
+ * A class to save global variables
+ * @author black
+ *
+ */
 public class PipeGlobalValue {
     public static boolean PIPE_ON_WORKING = true;
     public static boolean PIPE_ON_PAUSE = false;
