@@ -38,7 +38,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        int sampleRateInHz = 22050;
+        int sampleRateInHz = 16000;
         int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         int audioSource = MediaRecorder.AudioSource.MIC;
