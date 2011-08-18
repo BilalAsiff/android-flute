@@ -15,6 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * Main Activity.
+ * @author black
+ *
+ */
 public class PipeActivity extends Activity {
 
     private PipeAudioInput audioInput = null;
@@ -27,7 +32,7 @@ public class PipeActivity extends Activity {
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
+        
         super.onCreate(savedInstanceState);
 
         PipeSurfaceView pipeView = new PipeSurfaceView(this);
@@ -50,7 +55,8 @@ public class PipeActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        
+        //To create midi file.
         SharedPreferences sharedPreferences = getSharedPreferences(
                 PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
         int instrumentNumber = sharedPreferences.getInt(
@@ -61,12 +67,12 @@ public class PipeActivity extends Activity {
             try {
                 MidiFile midiFile = new MidiFile();
                 midiFile.progChange(instrumentNumber);
-                midiFile.noteOn (0, PipeConstant.NOTE_VALUES[i], 127);
-                
+                midiFile.noteOn(0, PipeConstant.NOTE_VALUES[i], 127);
+
                 midiFile.noteOff(50, PipeConstant.NOTE_VALUES[i]);
                 FileOutputStream fileOutputStream = openFileOutput(fileName,
                         Context.MODE_WORLD_WRITEABLE);
-                
+
                 midiFile.writeToFile(fileOutputStream);
                 fileOutputStream.close();
 
@@ -75,7 +81,7 @@ public class PipeActivity extends Activity {
                 Log.e(PipeConstant.APP_TAG, "Create MidiFile Fail.", e);
             }
         }
-        
+
         PipeGlobalValue.resetMediaPlayers();
         PipeGlobalValue.PIPE_ON_WORKING = true;
     }

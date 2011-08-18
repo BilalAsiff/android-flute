@@ -20,10 +20,10 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
 
     private AudioRecord audioRecord = null;
 
-    private PipeSurfaceView fluteSurfaceView;
+    private PipeSurfaceView pipeSurfaceView;
 
-    public PipeAudioInput(PipeSurfaceView fluteSurfaceView) {
-        this.fluteSurfaceView = fluteSurfaceView;
+    public PipeAudioInput(PipeSurfaceView pipeSurfaceView) {
+        this.pipeSurfaceView = pipeSurfaceView;
     }
 
     public void release() {
@@ -38,7 +38,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        int sampleRateInHz = 44100;
+        int sampleRateInHz = 22050;
         int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         int audioSource = MediaRecorder.AudioSource.MIC;
@@ -102,15 +102,15 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
         super.onProgressUpdate(values);
         double inputDecible = values[0];
 
-        int noteValue = this.fluteSurfaceView.draw(inputDecible);
+        int noteValue = this.pipeSurfaceView.draw(inputDecible);
         if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0) {
             try {
                 if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
-
+                    String fileName = noteValue + ".mid";
                     MediaPlayer mediaPlayer = new MediaPlayer();
-                    FileInputStream fis = this.fluteSurfaceView.getContext()
-                            .openFileInput(noteValue + ".mid");
+                    FileInputStream fis = this.pipeSurfaceView.getContext()
+                            .openFileInput(fileName);
                     PipeGlobalValue.CURRENT_NOTE = noteValue;
                     PipeGlobalValue.addMediaPlayer(mediaPlayer);
                     mediaPlayer.setDataSource(fis.getFD());
@@ -118,6 +118,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                     
                     mediaPlayer.prepare();
                     mediaPlayer.start();
+                    Log.d(PipeConstant.APP_TAG, "Start mediaPlayer, fileName :" + fileName);
                     mediaPlayer.setVolume(0.5f, 0.5f);
 
                     Thread.sleep(50l);
@@ -140,6 +141,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
         if (this.audioRecord != null) {
             try {
                 this.audioRecord.release();
+                Log.d(PipeConstant.APP_TAG, "Release AudioRecord Object.");
             } catch (Exception e) {
                 Log.e(PipeConstant.APP_TAG, "Release AudioRecored Fail!", e);
             }
@@ -148,7 +150,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
 
     private void closeOldNote() {
         MediaPlayer oldMediaPlayer = PipeGlobalValue.removeMediaPlayer();
-
+        Log.d(PipeConstant.APP_TAG, "Retrieve the last MediaPlayer.");
         if (oldMediaPlayer != null) {
             try {
                 oldMediaPlayer.setVolume(0.5f, 0.5f);
@@ -157,6 +159,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                 oldMediaPlayer.stop();
                 oldMediaPlayer.release();
                 oldMediaPlayer = null;
+                Log.d(PipeConstant.APP_TAG, "Release media player.");
             } catch (Exception e) {
                 Log.e(PipeConstant.APP_TAG, "Unable to realease MediaPlayer.",
                         e);
