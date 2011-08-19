@@ -15,7 +15,8 @@ import android.util.Log;
  * @author black
  * 
  */
-public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
+public class PipeAudioInput extends
+        AsyncTask<Void, PipeAudioInput.VolumeTimeStampPair, Void> {
     private final int sampleSize = 8196;
 
     private AudioRecord audioRecord = null;
@@ -43,6 +44,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
         int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         int audioSource = MediaRecorder.AudioSource.MIC;
+        PipeAudioInput.VolumeTimeStampPair volumeTimeStampPair = new VolumeTimeStampPair();
 
         try {
             int bufferSizeInBytes = AudioRecord.getMinBufferSize(
@@ -60,6 +62,8 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                     break;
                 }
                 if (PipeGlobalValue.PIPE_ON_PAUSE == false) {
+                    volumeTimeStampPair
+                            .setTimeStamp(System.currentTimeMillis());
                     int bufferReadResult = audioRecord.read(audioData, 0,
                             this.sampleSize);
                     for (int i = 0; i < this.sampleSize && i < bufferReadResult; i++) {
@@ -80,7 +84,8 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                             averageDecibel += transform[i];
                         }
                         averageDecibel = averageDecibel / transform.length;
-                        this.publishProgress(averageDecibel);
+                        volumeTimeStampPair.setDecibel(averageDecibel);
+                        this.publishProgress(volumeTimeStampPair);
                     }
                 }
             }
@@ -99,12 +104,16 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
     }
 
     @Override
-    protected synchronized void onProgressUpdate(Double... values) {
+    protected synchronized void onProgressUpdate(
+            PipeAudioInput.VolumeTimeStampPair... values) {
         super.onProgressUpdate(values);
-        double inputDecible = values[0];
+
+        double inputDecible = values[0].getDecibel();
         Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
         int noteValue = this.pipeSurfaceView.draw(inputDecible);
-        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0) {
+        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE
+                && noteValue != 0
+                && System.currentTimeMillis() - values[0].getTimeStamp() < 1000l) {
             try {
                 if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
@@ -167,5 +176,36 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                         e);
             }
         }
+    }
+
+    class VolumeTimeStampPair {
+        double decibel;
+        long timeStamp;
+
+        public VolumeTimeStampPair() {
+        }
+
+        public double getDecibel() {
+            return decibel;
+        }
+
+        public void setDecibel(double decibel) {
+            this.decibel = decibel;
+        }
+
+        public long getTimeStamp() {
+            return timeStamp;
+        }
+
+        public void setTimeStamp(long timeStamp) {
+            this.timeStamp = timeStamp;
+        }
+
+        @Override
+        public String toString() {
+            return "VolumeTimeStampPair [decibel=" + decibel + ", timeStamp="
+                    + timeStamp + "]";
+        }
+
     }
 }
