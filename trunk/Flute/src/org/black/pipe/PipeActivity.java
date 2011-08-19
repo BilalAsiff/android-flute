@@ -65,15 +65,15 @@ public class PipeActivity extends Activity {
         for (int i = 0; i < PipeConstant.NOTE_VALUES.length; i++) {
             String fileName = PipeConstant.NOTE_VALUES[i] + ".mid";
             try {
-                MidiFile midiFile = new MidiFile();
-                midiFile.progChange(instrumentNumber);
-                midiFile.noteOn(0, PipeConstant.NOTE_VALUES[i], 127);
+                MidiMaker midiMaker = new MidiMaker();
+                midiMaker.programChange(instrumentNumber);
+                midiMaker.noteOn(0, PipeConstant.NOTE_VALUES[i], 127);
 
-                midiFile.noteOff(50, PipeConstant.NOTE_VALUES[i]);
+                midiMaker.noteOff(50, PipeConstant.NOTE_VALUES[i]);
                 FileOutputStream fileOutputStream = openFileOutput(fileName,
                         Context.MODE_WORLD_WRITEABLE);
 
-                midiFile.writeToFile(fileOutputStream);
+                midiMaker.write(fileOutputStream);
                 fileOutputStream.close();
 
                 PipeGlobalValue.noteFilePathPairs.put(i, fileName);
