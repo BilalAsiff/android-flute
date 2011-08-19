@@ -27,6 +27,7 @@ public class PipeGlobalValue {
 
     private static MotionEvent motionEvent = null;
     private static Lock motionEventLock = new ReentrantLock();
+    
 
     public static MotionEvent getMotionEvent() {
         motionEventLock.lock();
