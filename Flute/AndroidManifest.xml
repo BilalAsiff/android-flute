@@ -13,6 +13,9 @@
 			</intent-filter>
 		</activity>
 
+		<activity android:name=".pipe.ChangeHoleActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
+
 		<activity android:name=".pipe.ChangeInstrumentActivity"
 			android:theme="@android:style/Theme.NoTitleBar"></activity>
 	</application>
