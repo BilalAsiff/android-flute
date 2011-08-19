@@ -17,8 +17,9 @@ import android.view.MenuItem;
 
 /**
  * Main Activity.
+ * 
  * @author black
- *
+ * 
  */
 public class PipeActivity extends Activity {
 
@@ -33,7 +34,7 @@ public class PipeActivity extends Activity {
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        
+
         super.onCreate(savedInstanceState);
 
         PipeSurfaceView pipeView = new PipeSurfaceView(this);
@@ -56,13 +57,15 @@ public class PipeActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        
-        //To create midi file.
+
         SharedPreferences sharedPreferences = getSharedPreferences(
                 PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
+        // Retrieve instrument number
         int instrumentNumber = sharedPreferences.getInt(
                 PipeConstant.INSTRUMENT_NUMBER,
                 PipeConstant.DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT);
+        Log.i(PipeConstant.APP_TAG, "Instrument: " + instrumentNumber);
+        // Create Midi files
         for (int i = 0; i < PipeConstant.NOTE_VALUES.length; i++) {
             String fileName = PipeConstant.NOTE_VALUES[i] + ".mid";
             try {
@@ -78,6 +81,7 @@ public class PipeActivity extends Activity {
                 fileOutputStream.close();
 
                 PipeGlobalValue.noteFilePathPairs.put(i, fileName);
+                Log.i(PipeConstant.APP_TAG, "Create :" + fileName);
             } catch (Exception e) {
                 Log.e(PipeConstant.APP_TAG, "Create MidiFile Fail.", e);
             }
@@ -125,22 +129,24 @@ public class PipeActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        
+
         Intent intent = new Intent();
         Bundle extras = new Bundle();
-        
+
         switch (item.getItemId()) {
         case MENU_SET_HOLE:
             intent.setClass(PipeActivity.this, ChangeHoleActivity.class);
 
             intent.putExtras(extras);
             startActivity(intent);
+            Log.i(PipeConstant.APP_TAG, "Switch ChangeHole.");
             break;
         case MENU_SET_INSTRUMENT:
             intent.setClass(PipeActivity.this, ChangeInstrumentActivity.class);
 
             intent.putExtras(extras);
             startActivity(intent);
+            Log.i(PipeConstant.APP_TAG, "Switch ChangeInstrument.");
             break;
         }
         return true;

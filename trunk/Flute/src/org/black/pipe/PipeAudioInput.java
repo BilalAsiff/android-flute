@@ -30,6 +30,7 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
         if (this.audioRecord != null) {
             try {
                 this.audioRecord.release();
+                Log.d(PipeConstant.APP_TAG, "Release AudioRecored object.");
             } catch (Exception e) {
                 Log.e(PipeConstant.APP_TAG, "Fail to release AudioRelease!", e);
             }
@@ -115,10 +116,11 @@ public class PipeAudioInput extends AsyncTask<Void, Double, Void> {
                     PipeGlobalValue.addMediaPlayer(mediaPlayer);
                     mediaPlayer.setDataSource(fis.getFD());
                     fis.close();
-                    
+
                     mediaPlayer.prepare();
                     mediaPlayer.start();
-                    Log.d(PipeConstant.APP_TAG, "Start mediaPlayer, fileName :" + fileName);
+                    Log.d(PipeConstant.APP_TAG, "Start mediaPlayer, fileName :"
+                            + fileName);
                     mediaPlayer.setVolume(0.5f, 0.5f);
 
                     Thread.sleep(50l);
