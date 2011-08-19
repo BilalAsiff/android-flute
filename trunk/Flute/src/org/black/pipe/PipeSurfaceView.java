@@ -122,29 +122,29 @@ public class PipeSurfaceView extends SurfaceView implements
                         if (pointCount > 0) {
                             for (int i = 0; i < pointCount; i++) {
                                 float pointX = motionEvent.getX(i);
-                            float pointY = motionEvent.getY(i);
+                                float pointY = motionEvent.getY(i);
 
-                            double firstDistance = Math.sqrt(Math.pow(
-                                    pointX - firstCircle.getX(), 2)
-                                    + Math.pow(pointY - firstCircle.getY(),
-                                            2));
-                            if (firstDistance >= 0
-                                    && firstDistance < firstCircle
-                                            .getRadius()) {
-                                touchOnFirstCircle = true;
-                            }
+                                double firstDistance = Math.sqrt(Math.pow(
+                                        pointX - firstCircle.getX(), 2)
+                                        + Math.pow(pointY - firstCircle.getY(),
+                                                2));
+                                if (firstDistance >= 0
+                                        && firstDistance < firstCircle
+                                                .getRadius()) {
+                                    touchOnFirstCircle = true;
+                                }
 
-                            double secondDistance = Math
-                                    .sqrt(Math.pow(
-                                            pointX - secondCircle.getX(), 2)
-                                            + Math.pow(pointY
-                                                    - secondCircle.getY(),
-                                                    2));
-                            if (secondDistance >= 0
-                                    && secondDistance < secondCircle
-                                            .getRadius()) {
-                                touchOnSecondCircle = true;
-                            }
+                                double secondDistance = Math
+                                        .sqrt(Math.pow(
+                                                pointX - secondCircle.getX(), 2)
+                                                + Math.pow(pointY
+                                                        - secondCircle.getY(),
+                                                        2));
+                                if (secondDistance >= 0
+                                        && secondDistance < secondCircle
+                                                .getRadius()) {
+                                    touchOnSecondCircle = true;
+                                }
                             }
                         }
                     }
@@ -290,10 +290,10 @@ public class PipeSurfaceView extends SurfaceView implements
             float radius, boolean onTouch) {
         if (onTouch == true) {
             paint.setColor(Color.WHITE);
-            canvas.drawCircle(x, y, radius + 5, paint);
+            canvas.drawCircle(x, y, radius + 10, paint);
 
             paint.setColor(Color.argb(255, 102, 171, 255));
-            canvas.drawCircle(x, y, radius, paint);
+            canvas.drawCircle(x, y, radius + 5, paint);
         } else {
             paint.setColor(Color.argb(255, 0, 113, 255));
             canvas.drawCircle(x, y, radius, paint);
