@@ -293,10 +293,11 @@ public class PipeSurfaceView extends SurfaceView implements
             canvas.drawCircle(x, y, radius + 5, paint);
 
             paint.setColor(Color.argb(255, 102, 171, 255));
+            canvas.drawCircle(x, y, radius, paint);
         } else {
             paint.setColor(Color.argb(255, 0, 113, 255));
+            canvas.drawCircle(x, y, radius, paint);
         }
-        canvas.drawCircle(x, y, radius, paint);
     }
 
     /**
