@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -15,8 +16,9 @@ import android.widget.ListView;
 
 /**
  * Activity used to change instrument.
+ * 
  * @author black
- *
+ * 
  */
 public class ChangeInstrumentActivity extends Activity {
 
@@ -29,7 +31,7 @@ public class ChangeInstrumentActivity extends Activity {
                 this.getString(R.string.INSTRUMENT_PAN_FLUTE),
                 this.getString(R.string.INSTRUMENT_OCARINA) };
 
-        //To create a list view with radio button selected function.
+        // To create a list view with radio button function.
         ListView listView = new ListView(this);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -41,6 +43,7 @@ public class ChangeInstrumentActivity extends Activity {
         int instrumentNumber = sharedPreferences.getInt(
                 PipeConstant.INSTRUMENT_NUMBER,
                 PipeConstant.DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT);
+        Log.i(PipeConstant.APP_TAG, "instrument number: " + instrumentNumber);
 
         int checkedPosition = 1;
         if (instrumentNumber == PipeConstant.MIDI_PIPE_INSTRUMENT_NUMBERT[0]) {
@@ -69,10 +72,12 @@ public class ChangeInstrumentActivity extends Activity {
                         .edit()
                         .putInt(PipeConstant.INSTRUMENT_NUMBER,
                                 instrumentNumber).commit();
+                Log.d(PipeConstant.APP_TAG, "Switch to instrument: "
+                        + instrumentNumber);
                 finish();
             }
         });
-        
+
         setContentView(listView);
     }
 

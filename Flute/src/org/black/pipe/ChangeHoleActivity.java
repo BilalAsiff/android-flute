@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -13,8 +14,9 @@ import android.widget.ListView;
 
 /**
  * Activity to save hole number.
+ * 
  * @author black
- *
+ * 
  */
 public class ChangeHoleActivity extends Activity {
 
@@ -26,7 +28,7 @@ public class ChangeHoleActivity extends Activity {
 
         Integer[] holes = PipeConstant.INSTRUMENT_HOLE_NUMBER;
 
-        // To create a list view with radio button selected function.
+        // To create a list view with radio button function.
         ListView listView = new ListView(this);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -35,9 +37,10 @@ public class ChangeHoleActivity extends Activity {
 
         SharedPreferences sharedPreferences = getSharedPreferences(
                 PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
-        int holeNumber = sharedPreferences.getInt(
-                PipeConstant.HOLE_NUMBER,
+        // Retrieve hole number
+        int holeNumber = sharedPreferences.getInt(PipeConstant.HOLE_NUMBER,
                 PipeConstant.DEFAULT_INSTRUMENT_HOLE_NUMBER);
+        Log.i(PipeConstant.APP_TAG, "hole number: " + holeNumber);
 
         int checkedPosition = 0;
         if (holeNumber == PipeConstant.INSTRUMENT_HOLE_NUMBER[0]) {
@@ -60,10 +63,9 @@ public class ChangeHoleActivity extends Activity {
 
                 SharedPreferences sharedPreferences = getSharedPreferences(
                         PipeConstant.SHARED_PERFERENCE, Context.MODE_PRIVATE);
-                sharedPreferences
-                        .edit()
-                        .putInt(PipeConstant.HOLE_NUMBER,
-                                holeNumber).commit();
+                sharedPreferences.edit()
+                        .putInt(PipeConstant.HOLE_NUMBER, holeNumber).commit();
+                Log.d(PipeConstant.APP_TAG, "Switch to :" + holeNumber);
                 finish();
             }
         });

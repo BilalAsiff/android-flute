@@ -64,6 +64,7 @@ public class PipeGlobalValue {
         if (mediaPlayers != null) {
             try {
                 mediaPlayers.clear();
+                Log.d(PipeConstant.APP_TAG, "Clear MidiPlayers.");
             } catch (Exception e) {
                 Log.e(PipeConstant.APP_TAG, "Clear MediaPlayers fail!", e);
             }
