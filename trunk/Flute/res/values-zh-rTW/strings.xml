@@ -7,4 +7,5 @@
     <string name="INSTRUMENT_RECORDER">直笛</string>
     <string name="INSTRUMENT_OCARINA">陶笛</string>
     <string name="INSTRUMENT_PAN_FLUTE">排笛</string>
+    <string name="CHANGE_HOLE_NUMBER">笛孔數</string>
 </resources>

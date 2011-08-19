@@ -24,7 +24,8 @@ public class PipeActivity extends Activity {
 
     private PipeAudioInput audioInput = null;
 
-    private final static int MENU_SET_INSTRUMENT = Menu.FIRST;
+    private final static int MENU_SET_HOLE = Menu.FIRST;
+    private final static int MENU_SET_INSTRUMENT = MENU_SET_HOLE + 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,7 @@ public class PipeActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+        menu.add(0, MENU_SET_HOLE, 0, R.string.CHANGE_HOLE_NUMBER);
         menu.add(0, MENU_SET_INSTRUMENT, 0, R.string.CHANGE_INSTRUMENT);
         return true;
     }
@@ -123,12 +125,20 @@ public class PipeActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+        
+        Intent intent = new Intent();
+        Bundle extras = new Bundle();
+        
         switch (item.getItemId()) {
+        case MENU_SET_HOLE:
+            intent.setClass(PipeActivity.this, ChangeHoleActivity.class);
+
+            intent.putExtras(extras);
+            startActivity(intent);
+            break;
         case MENU_SET_INSTRUMENT:
-            Intent intent = new Intent();
             intent.setClass(PipeActivity.this, ChangeInstrumentActivity.class);
 
-            Bundle extras = new Bundle();
             intent.putExtras(extras);
             startActivity(intent);
             break;
