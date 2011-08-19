@@ -56,7 +56,6 @@ public class PipeSurfaceView extends SurfaceView implements
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
     }
 
     /**
@@ -105,6 +104,8 @@ public class PipeSurfaceView extends SurfaceView implements
                 int holeNumber = sharedPreferences.getInt(
                         PipeConstant.HOLE_NUMBER,
                         PipeConstant.DEFAULT_INSTRUMENT_HOLE_NUMBER);
+                Log.i(PipeConstant.APP_TAG, "hole number: " + holeNumber);
+
                 if (holeNumber == 2) {
                     boolean touchOnFirstCircle = false;
                     boolean touchOnSecondCircle = false;
@@ -123,58 +124,25 @@ public class PipeSurfaceView extends SurfaceView implements
                                 float pointX = motionEvent.getX(i);
                                 float pointY = motionEvent.getY(i);
 
-                                double firstDistance = Math.sqrt(Math.pow(
-                                        pointX - firstCircle.getX(), 2)
-                                        + Math.pow(pointY - firstCircle.getY(),
-                                                2));
-                                if (firstDistance >= 0
-                                        && firstDistance < firstCircle
-                                                .getRadius()) {
-                                    touchOnFirstCircle = true;
-                                }
-
-                                double secondDistance = Math
-                                        .sqrt(Math.pow(
-                                                pointX - secondCircle.getX(), 2)
-                                                + Math.pow(pointY
-                                                        - secondCircle.getY(),
-                                                        2));
-                                if (secondDistance >= 0
-                                        && secondDistance < secondCircle
-                                                .getRadius()) {
-                                    touchOnSecondCircle = true;
-                                }
-
+                                touchOnFirstCircle = touchOnCircle(
+                                        firstCircle.getX(), firstCircle.getY(),
+                                        firstCircle.getRadius(), pointX, pointY);
+                                touchOnSecondCircle = touchOnCircle(
+                                        secondCircle.getX(),
+                                        secondCircle.getY(),
+                                        secondCircle.getRadius(), pointX,
+                                        pointY);
                             }
                         }
                     }
 
-                    // Draw circle and border
-                    if (touchOnFirstCircle == true) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawCircle(firstCircle.getX(),
-                                firstCircle.getY(),
-                                firstCircle.getRadius() + 5, paint);
-
-                        paint.setColor(Color.argb(255, 102, 171, 255));
-                    } else {
-                        paint.setColor(Color.argb(255, 0, 113, 255));
-                    }
-                    canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
-                            firstCircle.getRadius(), paint);
-
-                    if (touchOnSecondCircle == true) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawCircle(secondCircle.getX(),
-                                secondCircle.getY(),
-                                secondCircle.getRadius() + 5, paint);
-
-                        paint.setColor(Color.argb(255, 102, 171, 255));
-                    } else {
-                        paint.setColor(Color.argb(255, 0, 113, 255));
-                    }
-                    canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
-                            secondCircle.getRadius(), paint);
+                    // Draw hole
+                    drawHole(canvas, paint, firstCircle.getX(),
+                            firstCircle.getY(), firstCircle.getRadius(),
+                            touchOnFirstCircle);
+                    drawHole(canvas, paint, secondCircle.getX(),
+                            secondCircle.getY(), secondCircle.getRadius(),
+                            touchOnSecondCircle);
 
                     // Compute note value
                     if (touchOnFirstCircle == true
@@ -211,81 +179,30 @@ public class PipeSurfaceView extends SurfaceView implements
                                 float pointX = motionEvent.getX(i);
                                 float pointY = motionEvent.getY(i);
 
-                                double firstDistance = Math.sqrt(Math.pow(
-                                        pointX - firstCircle.getX(), 2)
-                                        + Math.pow(pointY - firstCircle.getY(),
-                                                2));
-                                if (firstDistance >= 0
-                                        && firstDistance < firstCircle
-                                                .getRadius()) {
-                                    touchOnFirstCircle = true;
-                                }
-
-                                double secondDistance = Math
-                                        .sqrt(Math.pow(
-                                                pointX - secondCircle.getX(), 2)
-                                                + Math.pow(pointY
-                                                        - secondCircle.getY(),
-                                                        2));
-                                if (secondDistance >= 0
-                                        && secondDistance < secondCircle
-                                                .getRadius()) {
-                                    touchOnSecondCircle = true;
-                                }
-
-                                double thirdDistance = Math.sqrt(Math.pow(
-                                        pointX - thirdCircle.getX(), 2)
-                                        + Math.pow(pointY - thirdCircle.getY(),
-                                                2));
-                                if (thirdDistance >= 0
-                                        && thirdDistance < thirdCircle
-                                                .getRadius()) {
-                                    touchOnThirdCircle = true;
-                                }
-
+                                touchOnFirstCircle = touchOnCircle(
+                                        firstCircle.getX(), firstCircle.getY(),
+                                        firstCircle.getRadius(), pointX, pointY);
+                                touchOnSecondCircle = touchOnCircle(
+                                        secondCircle.getX(),
+                                        secondCircle.getY(),
+                                        secondCircle.getRadius(), pointX,
+                                        pointY);
+                                touchOnFirstCircle = touchOnCircle(
+                                        thirdCircle.getX(), thirdCircle.getY(),
+                                        thirdCircle.getRadius(), pointX, pointY);
                             }
                         }
                     }
-
-                    // Draw circle and border
-                    if (touchOnFirstCircle == true) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawCircle(firstCircle.getX(),
-                                firstCircle.getY(),
-                                firstCircle.getRadius() + 5, paint);
-
-                        paint.setColor(Color.argb(255, 102, 171, 255));
-                    } else {
-                        paint.setColor(Color.argb(255, 0, 113, 255));
-                    }
-                    canvas.drawCircle(firstCircle.getX(), firstCircle.getY(),
-                            firstCircle.getRadius(), paint);
-
-                    if (touchOnSecondCircle == true) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawCircle(secondCircle.getX(),
-                                secondCircle.getY(),
-                                secondCircle.getRadius() + 5, paint);
-
-                        paint.setColor(Color.argb(255, 102, 171, 255));
-                    } else {
-                        paint.setColor(Color.argb(255, 0, 113, 255));
-                    }
-                    canvas.drawCircle(secondCircle.getX(), secondCircle.getY(),
-                            secondCircle.getRadius(), paint);
-
-                    if (touchOnThirdCircle == true) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawCircle(thirdCircle.getX(),
-                                thirdCircle.getY(),
-                                thirdCircle.getRadius() + 5, paint);
-
-                        paint.setColor(Color.argb(255, 102, 171, 255));
-                    } else {
-                        paint.setColor(Color.argb(255, 0, 113, 255));
-                    }
-                    canvas.drawCircle(thirdCircle.getX(), thirdCircle.getY(),
-                            thirdCircle.getRadius(), paint);
+                    // Draw hole
+                    drawHole(canvas, paint, firstCircle.getX(),
+                            firstCircle.getY(), firstCircle.getRadius(),
+                            touchOnFirstCircle);
+                    drawHole(canvas, paint, secondCircle.getX(),
+                            secondCircle.getY(), secondCircle.getRadius(),
+                            touchOnSecondCircle);
+                    drawHole(canvas, paint, thirdCircle.getX(),
+                            thirdCircle.getY(), thirdCircle.getRadius(),
+                            touchOnThirdCircle);
 
                     // Compute note value
                     if (touchOnFirstCircle == true
@@ -331,8 +248,33 @@ public class PipeSurfaceView extends SurfaceView implements
                 Log.e(PipeConstant.APP_TAG, "unlockCanvasAsPost fail!", e);
             }
         }
+
+        Log.d(PipeConstant.APP_TAG, "Return note : " + result);
         return result;
     }
+
+    private void drawHole(Canvas canvas, Paint paint, float x, float y,
+            float radius, boolean onTouch) {
+        if (onTouch == true) {
+            paint.setColor(Color.WHITE);
+            canvas.drawCircle(x, y, radius + 5, paint);
+
+            paint.setColor(Color.argb(255, 102, 171, 255));
+        } else {
+            paint.setColor(Color.argb(255, 0, 113, 255));
+        }
+        canvas.drawCircle(x, y, radius, paint);
+    }
+
+    private boolean touchOnCircle(float x, float y, float radius, float eventX,
+            float eventY) {
+        double firstDistance = Math.sqrt(Math.pow(eventX - x, 2)
+                + Math.pow(eventY - y, 2));
+        if (firstDistance >= 0 && firstDistance < radius) {
+            return true;
+        }
+        return false;
+    };
 
     /**
      * Private class to store circle information.
