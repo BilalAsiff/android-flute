@@ -73,7 +73,7 @@ public class PipeActivity extends Activity {
                 midiMaker.programChange(instrumentNumber);
                 midiMaker.noteOn(0, PipeConstant.NOTE_VALUES[i], 127);
 
-                midiMaker.noteOff(50, PipeConstant.NOTE_VALUES[i]);
+                midiMaker.noteOff(100, PipeConstant.NOTE_VALUES[i]);
                 FileOutputStream fileOutputStream = openFileOutput(fileName,
                         Context.MODE_WORLD_WRITEABLE);
 
