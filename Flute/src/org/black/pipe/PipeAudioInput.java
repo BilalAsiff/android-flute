@@ -112,8 +112,7 @@ public class PipeAudioInput extends
         double inputDecible = values[0].getDecibel();
         Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
         int noteValue = this.pipeSurfaceView.draw(inputDecible);
-        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0
-                && System.currentTimeMillis() - values[0].getTimeStamp() < 1000l) {
+        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0) {
             try {
                 if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
