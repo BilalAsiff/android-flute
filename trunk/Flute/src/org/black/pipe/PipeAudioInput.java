@@ -44,7 +44,6 @@ public class PipeAudioInput extends
         int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         int audioSource = MediaRecorder.AudioSource.MIC;
-        PipeAudioInput.VolumeTimeStampPair volumeTimeStampPair = new VolumeTimeStampPair();
 
         try {
             int bufferSizeInBytes = AudioRecord.getMinBufferSize(
@@ -62,6 +61,7 @@ public class PipeAudioInput extends
                     break;
                 }
                 if (PipeGlobalValue.PIPE_ON_PAUSE == false) {
+                    PipeAudioInput.VolumeTimeStampPair volumeTimeStampPair = new VolumeTimeStampPair();
                     volumeTimeStampPair
                             .setTimeStamp(System.currentTimeMillis());
                     int bufferReadResult = audioRecord.read(audioData, 0,
@@ -91,7 +91,6 @@ public class PipeAudioInput extends
             }
 
             Log.i(PipeConstant.APP_TAG, "Leave recording status");
-
         } catch (Throwable t) {
             Log.e(PipeConstant.APP_TAG, "Recording Failed", t);
         }
@@ -111,9 +110,8 @@ public class PipeAudioInput extends
         double inputDecible = values[0].getDecibel();
         Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
         int noteValue = this.pipeSurfaceView.draw(inputDecible);
-        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE
-                && noteValue != 0
-                && System.currentTimeMillis() - values[0].getTimeStamp() < 1000l) {
+        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0
+                && System.currentTimeMillis() - values[0].getTimeStamp() < 100l) {
             try {
                 if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
