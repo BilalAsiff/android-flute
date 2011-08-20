@@ -87,10 +87,12 @@ public class PipeAudioInput extends
                         volumeTimeStampPair.setDecibel(averageDecibel);
                         this.publishProgress(volumeTimeStampPair);
                     }
+                    volumeTimeStampPair = null;
                 }
             }
 
             Log.i(PipeConstant.APP_TAG, "Leave recording status");
+
         } catch (Throwable t) {
             Log.e(PipeConstant.APP_TAG, "Recording Failed", t);
         }
@@ -111,7 +113,7 @@ public class PipeAudioInput extends
         Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
         int noteValue = this.pipeSurfaceView.draw(inputDecible);
         if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0
-                && System.currentTimeMillis() - values[0].getTimeStamp() < 100l) {
+                && System.currentTimeMillis() - values[0].getTimeStamp() < 1000l) {
             try {
                 if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
