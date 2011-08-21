@@ -7,21 +7,23 @@ package org.black.pipe;
  * 
  */
 public interface PipeConstant {
-    String APP_TAG = "org.black.Pipe";
+    final String APP_TAG = "org.black.Pipe";
 
-    int[] NOTE_VALUES = { 72, 74, 76, 77, 79, 81, 83, 84 };
+    final int[] NOTE_VALUES = { 72, 74, 76, 77, 79, 81, 83, 84 };
+    
+    final int[] AUDIO_PRESSURE = {83, 70, 60};
+    final int DEFAULT_MIN_AUDIO_PRESSURE = AUDIO_PRESSURE[0];
 
-    int MIN_AUDIO_PRESSURE = 35;
+    final String SHARED_PERFERENCE = "pipe.sharedPreference";
+    final String INSTRUMENT_NUMBER = "Instrument_number";
+    final String HOLE_NUMBER = "Hole_number";
 
-    String SHARED_PERFERENCE = "pipe.sharedPreference";
-    String INSTRUMENT_NUMBER = "Instrument_number";
-    String HOLE_NUMBER = "Hole_number";
+    final int[] MIDI_PIPE_INSTRUMENT_NUMBERT = { 74, 76, 79 };
+    final int DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT = MIDI_PIPE_INSTRUMENT_NUMBERT[0];
+    final String[] MIDI_PIPE_INSTRUMENT_NAME = { "Flute", "Pan Flute",
+            "Ocarina" };
+    final String DEFAULT_MIDI_PIPE_INSTRUMENT_NAME = MIDI_PIPE_INSTRUMENT_NAME[0];
 
-    int[] MIDI_PIPE_INSTRUMENT_NUMBERT = { 74, 76, 79 };
-    int DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT = MIDI_PIPE_INSTRUMENT_NUMBERT[0];
-    String[] MIDI_PIPE_INSTRUMENT_NAME = { "Flute", "Pan Flute", "Ocarina" };
-    String DEFAULT_MIDI_PIPE_INSTRUMENT_NAME = MIDI_PIPE_INSTRUMENT_NAME[0];
-
-    Integer[] INSTRUMENT_HOLE_NUMBER = { 2, 3 };
-    int DEFAULT_INSTRUMENT_HOLE_NUMBER = INSTRUMENT_HOLE_NUMBER[0];
+    final Integer[] INSTRUMENT_HOLE_NUMBER = { 2, 3 };
+    final int DEFAULT_INSTRUMENT_HOLE_NUMBER = INSTRUMENT_HOLE_NUMBER[0];
 }
