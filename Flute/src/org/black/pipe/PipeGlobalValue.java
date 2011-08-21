@@ -28,7 +28,6 @@ public class PipeGlobalValue {
 
     private static MotionEvent motionEvent = null;
     private static Lock motionEventLock = new ReentrantLock();
-    private static int holeNumber = 2;
 
     public static MotionEvent getMotionEvent() {
         motionEventLock.lock();
@@ -71,13 +70,5 @@ public class PipeGlobalValue {
             mediaPlayers = null;
         }
         mediaPlayers = new Vector<MediaPlayer>();
-    }
-
-    public static int getHoleNumber() {
-        return holeNumber;
-    }
-
-    public static void setHoleNumber(int holeNumber) {
-        PipeGlobalValue.holeNumber = holeNumber;
     }
 }
