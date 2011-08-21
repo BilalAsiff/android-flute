@@ -17,7 +17,7 @@ import android.util.Log;
  */
 public class PipeAudioInput extends
         AsyncTask<Void, PipeAudioInput.VolumeTimeStampPair, Void> {
-    private final int sampleSize = 8196;
+    private final int sampleSize = 4096;
 
     private AudioRecord audioRecord = null;
 
@@ -88,6 +88,7 @@ public class PipeAudioInput extends
                         this.publishProgress(volumeTimeStampPair);
                     }
                     volumeTimeStampPair = null;
+                    System.gc();
                 }
             }
 
@@ -112,7 +113,9 @@ public class PipeAudioInput extends
         double inputDecible = values[0].getDecibel();
         Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
         int noteValue = this.pipeSurfaceView.draw(inputDecible);
-        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE && noteValue != 0) {
+        if (inputDecible > PipeConstant.MIN_AUDIO_PRESSURE
+                && noteValue != 0
+                && System.currentTimeMillis() - values[0].getTimeStamp() < 500l) {
             try {
                 if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
                     closeOldNote();
@@ -130,9 +133,6 @@ public class PipeAudioInput extends
                     Log.d(PipeConstant.APP_TAG, "Start mediaPlayer, fileName :"
                             + fileName);
                     mediaPlayer.setVolume(0.5f, 0.5f);
-
-                    Thread.sleep(50l);
-
                     mediaPlayer.setVolume(1.0f, 1.0f);
                 }
             } catch (Exception e) {
