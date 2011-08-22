@@ -28,7 +28,10 @@ public class PipeAudioInput extends
     public PipeAudioInput(PipeSurfaceView pipeSurfaceView) {
         this.pipeSurfaceView = pipeSurfaceView;
     }
-
+    
+    /**
+     * To release internal using object.
+     */
     public void release() {
         if (this.audioRecord != null) {
             try {

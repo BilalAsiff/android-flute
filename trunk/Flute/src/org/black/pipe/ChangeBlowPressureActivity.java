@@ -1,5 +1,7 @@
 package org.black.pipe;
 
+import org.black.R;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,16 +28,15 @@ public class ChangeBlowPressureActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        Integer[] blowPressures = new Integer[PipeConstant.BLOW_PRESSURES.length];
-        for (int i = 0; i < blowPressures.length; i++) {
-            blowPressures[i] = PipeConstant.BLOW_PRESSURES[i];
-        }
+        String[] blowPressures = { this.getString(R.string.BLOW_PRESSURE_HIGH),
+                this.getString(R.string.BLOW_PRESSURE_MIDDLE),
+                this.getString(R.string.BLOW_PRESSURE_LOW) };
 
         // To create a list view with radio button function.
         ListView listView = new ListView(this);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_single_choice, blowPressures);
 
         SharedPreferences sharedPreferences = getSharedPreferences(
