@@ -2,6 +2,8 @@ package org.black.pipe;
 
 import java.io.FileInputStream;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaPlayer;
@@ -113,7 +115,15 @@ public class PipeAudioInput extends
         double inputDecible = values[0].getDecibel();
         Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
         int noteValue = this.pipeSurfaceView.draw(inputDecible);
-        if (inputDecible > PipeConstant.DEFAULT_MIN_AUDIO_PRESSURE
+        
+        SharedPreferences sharedPreferences = this.pipeSurfaceView.getContext()
+                .getSharedPreferences(PipeConstant.SHARED_PERFERENCE,
+                        Context.MODE_PRIVATE);
+        int blowPressure = sharedPreferences.getInt(
+                PipeConstant.BLOW_PRESSURE_THRESHOLD,
+                PipeConstant.DEFAULT_MIN_BLOW_PRESSURE);
+        
+        if (inputDecible > blowPressure
                 && noteValue != 0
                 && System.currentTimeMillis() - values[0].getTimeStamp() < 500l) {
             try {

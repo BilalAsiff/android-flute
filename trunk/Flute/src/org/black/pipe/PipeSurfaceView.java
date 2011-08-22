@@ -76,7 +76,7 @@ public class PipeSurfaceView extends SurfaceView implements
                 canvas.drawRect(0, 0, this.screenWidth, this.screenHeight,
                         paint);
 
-                if (audioVelocity > PipeConstant.DEFAULT_MIN_AUDIO_PRESSURE) {
+                if (audioVelocity > PipeConstant.DEFAULT_MIN_BLOW_PRESSURE) {
                     paint.setColor(Color.argb(255, 102, 171, 255));
                 } else {
                     paint.setColor(Color.argb(255, 0, 113, 255));

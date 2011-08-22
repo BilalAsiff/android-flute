@@ -8,4 +8,8 @@
     <string name="INSTRUMENT_OCARINA">陶笛</string>
     <string name="INSTRUMENT_PAN_FLUTE">排笛</string>
     <string name="CHANGE_HOLE_NUMBER">笛孔數</string>
+    <string name="BLOW_PRESSURE">聲壓</string>
+    <string name="BLOW_PRESSURE_HIGH">高</string>
+    <string name="BLOW_PRESSURE_MIDDLE">中</string>
+    <string name="BLOW_PRESSURE_LOW">低</string>
 </resources>
