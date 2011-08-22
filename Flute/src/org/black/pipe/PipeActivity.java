@@ -25,7 +25,8 @@ public class PipeActivity extends Activity {
 
     private PipeAudioInput audioInput = null;
 
-    private final static int MENU_SET_HOLE = Menu.FIRST;
+    private final static int MENU_SET_BLOW = Menu.FIRST;
+    private final static int MENU_SET_HOLE = MENU_SET_BLOW + 1;
     private final static int MENU_SET_INSTRUMENT = MENU_SET_HOLE + 1;
 
     @Override
@@ -121,8 +122,12 @@ public class PipeActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+        
+        //Three menu selections.
+        menu.add(0, MENU_SET_BLOW, 0, R.string.BLOW_PRESSURE);
         menu.add(0, MENU_SET_HOLE, 0, R.string.CHANGE_HOLE_NUMBER);
         menu.add(0, MENU_SET_INSTRUMENT, 0, R.string.CHANGE_INSTRUMENT);
+        
         return true;
     }
 
@@ -134,6 +139,13 @@ public class PipeActivity extends Activity {
         Bundle extras = new Bundle();
 
         switch (item.getItemId()) {
+        case MENU_SET_BLOW:
+            intent.setClass(PipeActivity.this, ChangeBlowPressureActivity.class);
+
+            intent.putExtras(extras);
+            startActivity(intent);
+            Log.i(PipeConstant.APP_TAG, "Switch ChangeBlowPressure.");
+            break;
         case MENU_SET_HOLE:
             intent.setClass(PipeActivity.this, ChangeHoleActivity.class);
 

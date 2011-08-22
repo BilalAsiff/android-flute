@@ -19,5 +19,8 @@
 
 		<activity android:name=".pipe.ChangeInstrumentActivity"
 			android:theme="@android:style/Theme.NoTitleBar"></activity>
+			
+		<activity android:name=".pipe.ChangeBlowPressureActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 	</application>
 </manifest>
