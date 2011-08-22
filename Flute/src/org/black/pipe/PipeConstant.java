@@ -11,12 +11,13 @@ public interface PipeConstant {
 
     final int[] NOTE_VALUES = { 72, 74, 76, 77, 79, 81, 83, 84 };
     
-    final int[] AUDIO_PRESSURE = {83, 70, 60};
-    final int DEFAULT_MIN_AUDIO_PRESSURE = AUDIO_PRESSURE[0];
+    final int[] BLOW_PRESSURES = {83, 70, 60};
+    final int DEFAULT_MIN_BLOW_PRESSURE = BLOW_PRESSURES[0];
 
     final String SHARED_PERFERENCE = "pipe.sharedPreference";
     final String INSTRUMENT_NUMBER = "Instrument_number";
     final String HOLE_NUMBER = "Hole_number";
+    final String BLOW_PRESSURE_THRESHOLD = "BLOW_pressure_threshold";
 
     final int[] MIDI_PIPE_INSTRUMENT_NUMBERT = { 74, 76, 79 };
     final int DEFAULT_MIDI_PIPE_INSTRUMENT_NUMBERT = MIDI_PIPE_INSTRUMENT_NUMBERT[0];

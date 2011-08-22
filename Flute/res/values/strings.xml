@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Flute</string>
-    <string name="CHANGE_INSTRUMENT">Change Instrument</string>
+    <string name="CHANGE_INSTRUMENT">Instrument</string>
     <string name="INSTRUMENT_PICCOLO">Piccolo</string>
     <string name="INSTRUMENT_FLUTE">Flute</string>
     <string name="INSTRUMENT_RECORDER">Recorder</string>
     <string name="INSTRUMENT_OCARINA">Ocarina</string>
     <string name="INSTRUMENT_PAN_FLUTE">Pan Flute</string>
-    <string name="CHANGE_HOLE_NUMBER">Hole Number</string>
+    <string name="CHANGE_HOLE_NUMBER">Hole</string>
+    <string name="BLOW_PRESSURE">Blow Pressure</string>
+    <string name="BLOW_PRESSURE_HIGH">High</string>
+    <string name="BLOW_PRESSURE_MIDDLE">Middle</string>
+    <string name="BLOW_PRESSURE_LOW">Low</string>
 </resources>
