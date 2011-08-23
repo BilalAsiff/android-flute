@@ -47,7 +47,7 @@ public class ChangeBlowPressureActivity extends Activity {
                 PipeConstant.DEFAULT_MIN_BLOW_PRESSURE);
         Log.i(PipeConstant.APP_TAG, "Blow pressure: " + blowPressure);
 
-        int checkedPosition = 0;
+        int checkedPosition = 1;
         if (blowPressure == PipeConstant.BLOW_PRESSURES[0]) {
             checkedPosition = 0;
         } else if (blowPressure == PipeConstant.BLOW_PRESSURES[1]) {
@@ -55,7 +55,7 @@ public class ChangeBlowPressureActivity extends Activity {
         } else if (blowPressure == PipeConstant.BLOW_PRESSURES[2]) {
             checkedPosition = 2;
         } else {
-            checkedPosition = 0;
+            checkedPosition = 1;
         }
 
         listView.setAdapter(adapter);

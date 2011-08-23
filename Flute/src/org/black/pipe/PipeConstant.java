@@ -12,7 +12,7 @@ public interface PipeConstant {
     final int[] NOTE_VALUES = { 72, 74, 76, 77, 79, 81, 83, 84 };
     
     final int[] BLOW_PRESSURES = {83, 71, 61};
-    final int DEFAULT_MIN_BLOW_PRESSURE = BLOW_PRESSURES[0];
+    final int DEFAULT_MIN_BLOW_PRESSURE = BLOW_PRESSURES[1];
 
     final String SHARED_PERFERENCE = "pipe.sharedPreference";
     final String INSTRUMENT_NUMBER = "Instrument_number";
