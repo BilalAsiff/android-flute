@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -17,207 +15,148 @@ import android.util.Log;
  * @author black
  * 
  */
-public class PipeAudioInput extends
-        AsyncTask<Void, PipeAudioInput.VolumeTimeStampPair, Void> {
-    private final int sampleSize = 4096;
+public class PipeAudioInput extends AsyncTask<Void, Float, Void> {
+	private MediaRecorder mediaRecorder = null;
 
-    private AudioRecord audioRecord = null;
+	private PipeSurfaceView pipeSurfaceView;
 
-    private PipeSurfaceView pipeSurfaceView;
+	private long lastWorkTime = 0l;
 
-    public PipeAudioInput(PipeSurfaceView pipeSurfaceView) {
-        this.pipeSurfaceView = pipeSurfaceView;
-    }
-    
-    /**
-     * To release internal using object.
-     */
-    public void release() {
-        if (this.audioRecord != null) {
-            try {
-                this.audioRecord.release();
-                Log.d(PipeConstant.APP_TAG, "Release AudioRecored object.");
-            } catch (Exception e) {
-                Log.e(PipeConstant.APP_TAG, "Fail to release AudioRelease!", e);
-            }
-        }
-    }
+	public PipeAudioInput(PipeSurfaceView pipeSurfaceView) {
+		this.pipeSurfaceView = pipeSurfaceView;
+	}
 
-    @Override
-    protected Void doInBackground(Void... params) {
-        int sampleRateInHz = 16000;
-        int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
-        int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-        int audioSource = MediaRecorder.AudioSource.MIC;
+	/**
+	 * To release internal using object.
+	 */
+	public void release() {
+		if (this.mediaRecorder != null) {
+			try {
+				this.mediaRecorder.release();
+				Log.d(PipeConstant.APP_TAG, "Release AudioRecored object.");
+			} catch (Exception e) {
+				Log.e(PipeConstant.APP_TAG, "Fail to release AudioRelease!", e);
+			}
+		}
+	}
 
-        try {
-            int bufferSizeInBytes = AudioRecord.getMinBufferSize(
-                    sampleRateInHz, channelConfig, audioFormat);
-            this.audioRecord = new AudioRecord(audioSource, sampleRateInHz,
-                    channelConfig, audioFormat, bufferSizeInBytes);
-            int audioRecordStatus = audioRecord.getState();
-            Log.d(PipeConstant.APP_TAG, "AudioRecord status: "
-                    + audioRecordStatus);
-            audioRecord.startRecording();
-            short[] audioData = new short[this.sampleSize];
-            double[] transform = new double[this.sampleSize];
-            while (true) {
-                if (PipeGlobalValue.PIPE_ON_WORKING == false) {
-                    break;
-                }
-                if (PipeGlobalValue.PIPE_ON_PAUSE == false) {
-                    PipeAudioInput.VolumeTimeStampPair volumeTimeStampPair = new VolumeTimeStampPair();
-                    volumeTimeStampPair
-                            .setTimeStamp(System.currentTimeMillis());
-                    int bufferReadResult = audioRecord.read(audioData, 0,
-                            this.sampleSize);
-                    for (int i = 0; i < this.sampleSize && i < bufferReadResult; i++) {
-                        /*
-                         * Learn the PCM-Decibel transform formula from the
-                         * following site:
-                         * http://stackoverflow.com/questions/2917762
-                         * /android-pcm-bytes But I know my implementation is
-                         * wrong.
-                         */
+	@Override
+	protected Void doInBackground(Void... params) {
+		try {
+			this.mediaRecorder = new MediaRecorder();
+			this.mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+			this.mediaRecorder
+					.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+			this.mediaRecorder
+					.setAudioEncoder(MediaRecorder.OutputFormat.THREE_GPP);
+			this.mediaRecorder.setOutputFile("/dev/null");
+			this.mediaRecorder.prepare();
+			this.mediaRecorder.start();
+			while (true) {
+				if (PipeGlobalValue.PIPE_ON_WORKING == false) {
+					break;
+				}
+				if (PipeGlobalValue.PIPE_ON_PAUSE == false) {
+					if (this.mediaRecorder != null) {
+						/*
+						 * Learn the PCM-Decibel transform formula from the
+						 * following site:
+						 * http://stackoverflow.com/questions/2917762
+						 * /android-pcm-bytes But I know my implementation is
+						 * wrong.
+						 */
+						float decibel = (float) (20.0D * Math
+								.log10(this.mediaRecorder.getMaxAmplitude()));
+						this.publishProgress(decibel);
+					}
+				}
+				System.gc();
+			}
 
-                        transform[i] = 20d * Math
-                                .log10((Math.abs(audioData[i])));
-                    }
-                    double averageDecibel = 0.0d;
-                    if (transform != null) {
-                        for (int i = 0; i < this.sampleSize; i++) {
-                            averageDecibel += transform[i];
-                        }
-                        averageDecibel = averageDecibel / transform.length;
-                        volumeTimeStampPair.setDecibel(averageDecibel);
-                        this.publishProgress(volumeTimeStampPair);
-                    }
-                    volumeTimeStampPair = null;
-                    System.gc();
-                }
-            }
+			Log.i(PipeConstant.APP_TAG, "Leave recording status");
 
-            Log.i(PipeConstant.APP_TAG, "Leave recording status");
+		} catch (Throwable t) {
+			Log.e(PipeConstant.APP_TAG, "Recording Failed", t);
+		}
+		return null;
+	}
 
-        } catch (Throwable t) {
-            Log.e(PipeConstant.APP_TAG, "Recording Failed", t);
-        }
-        return null;
-    }
+	@Override
+	protected void onCancelled() {
+		super.onCancelled();
+	}
 
-    @Override
-    protected void onCancelled() {
-        super.onCancelled();
-    }
+	@Override
+	protected synchronized void onProgressUpdate(Float... values) {
+		super.onProgressUpdate(values);
+		float inputDecible = values[0];
+		Log.d(PipeConstant.APP_TAG, "inputeDecible: " + inputDecible);
+		int noteValue = this.pipeSurfaceView.draw(inputDecible);
 
-    @Override
-    protected synchronized void onProgressUpdate(
-            PipeAudioInput.VolumeTimeStampPair... values) {
-        super.onProgressUpdate(values);
+		if (System.currentTimeMillis() - this.lastWorkTime < 500l) {
+			if (inputDecible > PipeConstant.DEFAULT_MIN_BLOW_PRESSURE && noteValue != 0) {
+				try {
+					if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
+						closeOldNote();
+						String fileName = noteValue + ".mid";
+						MediaPlayer mediaPlayer = new MediaPlayer();
+						FileInputStream fis = this.pipeSurfaceView.getContext()
+								.openFileInput(fileName);
+						PipeGlobalValue.CURRENT_NOTE = noteValue;
+						PipeGlobalValue.addMediaPlayer(mediaPlayer);
+						mediaPlayer.setDataSource(fis.getFD());
+						fis.close();
 
-        double inputDecible = values[0].getDecibel();
-        Log.d(PipeConstant.APP_TAG, "inputeDEcible: " + inputDecible);
-        int noteValue = this.pipeSurfaceView.draw(inputDecible);
-        
-        SharedPreferences sharedPreferences = this.pipeSurfaceView.getContext()
-                .getSharedPreferences(PipeConstant.SHARED_PERFERENCE,
-                        Context.MODE_PRIVATE);
-        int blowPressure = sharedPreferences.getInt(
-                PipeConstant.BLOW_PRESSURE_THRESHOLD,
-                PipeConstant.DEFAULT_MIN_BLOW_PRESSURE);
-        
-        if (inputDecible > blowPressure
-                && noteValue != 0
-                && System.currentTimeMillis() - values[0].getTimeStamp() < 500l) {
-            try {
-                if (noteValue != PipeGlobalValue.CURRENT_NOTE) {
-                    closeOldNote();
-                    String fileName = noteValue + ".mid";
-                    MediaPlayer mediaPlayer = new MediaPlayer();
-                    FileInputStream fis = this.pipeSurfaceView.getContext()
-                            .openFileInput(fileName);
-                    PipeGlobalValue.CURRENT_NOTE = noteValue;
-                    PipeGlobalValue.addMediaPlayer(mediaPlayer);
-                    mediaPlayer.setDataSource(fis.getFD());
-                    fis.close();
+						mediaPlayer.prepare();
+						mediaPlayer.start();
+						Log.d(PipeConstant.APP_TAG,
+								"Start mediaPlayer, fileName :" + fileName);
+						mediaPlayer.setVolume(0.5f, 0.5f);
+						mediaPlayer.setVolume(1.0f, 1.0f);
+					}
+				} catch (Exception e) {
+					Log.e(PipeConstant.APP_TAG, "Unable to play Midi file.", e);
+				}
+			} else {
+				closeOldNote();
+				PipeGlobalValue.CURRENT_NOTE = 0;
+			}
+		}
+		this.lastWorkTime = System.currentTimeMillis();
 
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                    Log.d(PipeConstant.APP_TAG, "Start mediaPlayer, fileName :"
-                            + fileName);
-                    mediaPlayer.setVolume(0.5f, 0.5f);
-                    mediaPlayer.setVolume(1.0f, 1.0f);
-                }
-            } catch (Exception e) {
-                Log.e(PipeConstant.APP_TAG, "Unable to play Midi file.", e);
-            }
-        } else {
-            closeOldNote();
-            PipeGlobalValue.CURRENT_NOTE = 0;
-        }
+	}
 
-    }
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		if (this.mediaRecorder != null) {
+			try {
+				this.mediaRecorder.stop();
+				this.mediaRecorder.release();
+				this.mediaRecorder = null;
+				Log.d(PipeConstant.APP_TAG, "Release MediaRecorder Object.");
+			} catch (Exception e) {
+				Log.e(PipeConstant.APP_TAG, "Release MediaRecorder Fail!", e);
+			}
+		}
+	}
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if (this.audioRecord != null) {
-            try {
-                this.audioRecord.release();
-                Log.d(PipeConstant.APP_TAG, "Release AudioRecord Object.");
-            } catch (Exception e) {
-                Log.e(PipeConstant.APP_TAG, "Release AudioRecored Fail!", e);
-            }
-        }
-    }
-
-    private void closeOldNote() {
-        MediaPlayer oldMediaPlayer = PipeGlobalValue.removeMediaPlayer();
-        Log.d(PipeConstant.APP_TAG, "Retrieve the last MediaPlayer.");
-        if (oldMediaPlayer != null) {
-            try {
-                oldMediaPlayer.setVolume(0.5f, 0.5f);
-                oldMediaPlayer.setVolume(0.2f, 0.2f);
-                oldMediaPlayer.pause();
-                oldMediaPlayer.stop();
-                oldMediaPlayer.release();
-                oldMediaPlayer = null;
-                Log.d(PipeConstant.APP_TAG, "Release media player.");
-            } catch (Exception e) {
-                Log.e(PipeConstant.APP_TAG, "Unable to realease MediaPlayer.",
-                        e);
-            }
-        }
-    }
-
-    class VolumeTimeStampPair {
-        double decibel;
-        long timeStamp;
-
-        public VolumeTimeStampPair() {
-        }
-
-        public double getDecibel() {
-            return decibel;
-        }
-
-        public void setDecibel(double decibel) {
-            this.decibel = decibel;
-        }
-
-        public long getTimeStamp() {
-            return timeStamp;
-        }
-
-        public void setTimeStamp(long timeStamp) {
-            this.timeStamp = timeStamp;
-        }
-
-        @Override
-        public String toString() {
-            return "VolumeTimeStampPair [decibel=" + decibel + ", timeStamp="
-                    + timeStamp + "]";
-        }
-
-    }
+	private void closeOldNote() {
+		MediaPlayer oldMediaPlayer = PipeGlobalValue.removeMediaPlayer();
+		Log.d(PipeConstant.APP_TAG, "Retrieve the last MediaPlayer.");
+		if (oldMediaPlayer != null) {
+			try {
+				oldMediaPlayer.setVolume(0.5f, 0.5f);
+				oldMediaPlayer.setVolume(0.2f, 0.2f);
+				oldMediaPlayer.pause();
+				oldMediaPlayer.stop();
+				oldMediaPlayer.release();
+				oldMediaPlayer = null;
+				Log.d(PipeConstant.APP_TAG, "Release media player.");
+			} catch (Exception e) {
+				Log.e(PipeConstant.APP_TAG, "Unable to realease MediaPlayer.",
+						e);
+			}
+		}
+	}
 }

@@ -124,7 +124,7 @@ public class PipeActivity extends Activity {
         super.onCreateOptionsMenu(menu);
         
         //Three menu selections.
-        menu.add(0, MENU_SET_BLOW, 0, R.string.BLOW_PRESSURE);
+        //menu.add(0, MENU_SET_BLOW, 0, R.string.BLOW_PRESSURE);
         menu.add(0, MENU_SET_HOLE, 0, R.string.CHANGE_HOLE_NUMBER);
         menu.add(0, MENU_SET_INSTRUMENT, 0, R.string.CHANGE_INSTRUMENT);
         
